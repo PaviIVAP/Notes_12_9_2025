@@ -1,0 +1,62 @@
+pipeline{
+
+
+agent any
+
+stages{
+
+stage('Git Checkout'){
+
+
+steps{
+
+git "https://github.com/PaviIVAP/JenkinsPractice.git"
+
+
+}
+
+
+
+
+}
+stage('Build')
+{
+
+steps{
+
+sh 'mvn clean package'
+
+
+
+}
+
+
+}
+stage('Run Java'){
+
+sh 'javac Third.java'
+sh 'java Third.java'
+
+
+}
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+}

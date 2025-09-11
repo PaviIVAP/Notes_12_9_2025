@@ -1,0 +1,654 @@
+pipeline{
+
+   agent any
+      stages{
+
+        stage('checkout'){
+
+           steps{
+                git "https://git.example"
+
+
+}
+
+}
+         stage('run command'){
+            steps{
+
+                sh 'echo "list all the files and folders"'
+                sh "ls -la"
+}
+
+
+}
+
+}
+--------------------------------------
+using archiveartifacts 
+
+piepline{
+
+   agent any
+
+parameters{
+ booleanparam(name:'DEPLOY', defaultvalue:'true', description:'to deploy basedon ool value')
+}
+stages{
+
+stage("Checkout"){
+steps{
+
+git "https://example.com"
+}
+}
+
+stage('Build'){
+steps{
+
+echo "Compiling"
+}
+
+stage('Archive'){}
+
+steps{
+archiveartifacts artifact: "**/target/*.jar"
+}
+stage('Deploy'){
+steps{
+script{
+if(param.DEPLOY){
+echo "Deploying in prod..."
+}
+else{
+echo "Skipping"
+}
+
+
+
+}
+}
+}
+
+
+}
+}
+
+    
+
+}
+
+}
+-----------------------------------------------------------------------------
+run unit tests and show resukt using Junit
+
+pipeline{
+
+
+agent any
+
+  stages{
+
+
+stage('build'){
+
+steps{
+echo "Compiling code"
+}
+
+Asterismoi$579
+
+
+
+stage('archiving'){
+
+
+steps{
+
+archiveartifacts artifact: "**/target/*.jar"  
+
+
+}
+
+stage('test'){
+
+steps{
+
+echo "running tests"
+
+sh 'mkdir -p /target/test-results'
+sh '"echo <testsuite><testcase classname=\'SampleTest\' name=\'testExample\'/></testsuite>" > target/test-results/test-result.xml"'=================>this 
+
+will run unit test
+
+
+}
+
+
+}
+
+stage('report creation'){
+
+steps{
+junit  target/test-results/test-result.xml           ===============================> this will show report in the ui using junit
+
+
+
+}
+}
+
+}
+
+
+mvn install, build
+It compiles the .java code.
+
+Then packages it into a .jar or .war file.
+The .jar file is stored in target/
+
+surefire, 
+These plugins generate test results in .xml files.
+
+These .xml files are also stored in target/, usually inside target/surefire-reports/
+
+
+Action	                        What happens	                        Output goes where
+==========================================================================================
+mvn package or mvn install	Code is compiled + JAR/WAR created	target/*.jar
+mvn test	                Tests are executed	                target/surefire-reports/*.xml
+
+archiveArtifacts artifacts: '**/target/*.jar' → Save the compiled .jar as a downloadable file.
+
+junit 'target/surefire-reports/*.xml' → Show test results from .xml.
+
+
+1.When you build the project (mvn package, mvn install, etc.)
+===========================================================
+It compiles the .java code.
+Then packages it into a .jar or .war file.
+The .jar file is stored in target/
+
+2. When you run tests (mvn test)
+========================================================
+Maven uses plugins like Surefire or Failsafe to run tests.
+These plugins generate test results in .xml files.
+These .xml files are also stored in target/, usually inside target/surefire-reports/
+
+}
+
+--------------------------------------------------------------------------------------
+
+using  loops, map, list, if, when
+
+pipeline {
+    agent any
+
+    stages {
+
+        stage('User Input') {
+            steps {
+                script {
+                    def userInput = input(
+                        message: 'Do you want to run deployments?',
+                        ok: 'Confirm',
+                        parameters: [
+                            booleanParam(
+                                defaultValue: true,
+                                description: 'Check to proceed with deployments',
+                                name: 'PROCEED'
+                            )
+                        ]
+                    )
+
+                    env.PROCEED = userInput ? "true" : "false"
+                    echo "User selected to proceed: ${env.PROCEED}"
+                }
+            }
+        }
+
+        stage('Environment Setup') {
+            steps {
+                script {
+                    // Define a map of environments and versions
+                    def envMap = [
+                        dev : "2.3.0",
+                        qa  : "2.3.1",
+                        prod: null
+                    ]
+
+                    echo "🔍 Checking environment versions..."
+                    envMap.each { envName, version ->
+                        if (version) {
+                            echo "✅ ${envName.toUpperCase()} is set for version ${version}"
+                        } else {
+                            echo "⚠️ No version defined for ${envName.toUpperCase()}"
+                        }
+                    }
+
+                    // Saving to env for later stages if needed
+                    env.ENV_MAP = envMap.toString()
+                }
+            }
+        }
+
+        stage('Fruits List') {
+            steps {
+                script {
+                    def fruits = ['apple', 'banana', 'mango']
+                    echo "🍎 Listing fruits:"
+                    fruits.each { fruit ->
+                        echo " - ${fruit}"
+                    }
+                }
+            }
+        }
+
+        stage('Deployment') {
+            when {
+                expression {
+                    return env.PROCEED == 'true'
+                }
+            }
+            steps {
+                script {
+                    def envMap = [
+                        dev : "2.3.0",
+                        qa  : "2.3.1",
+                        prod: null
+                    ]
+
+                    echo "🚀 Starting Deployment Process..."
+                    envMap.each { envName, version ->
+                        if (version) {
+                            echo "📦 Deploying version ${version} to ${envName.toUpperCase()}"
+                            // Add deployment logic here (e.g., sh "deploy --env=${envName} --version=${version}")
+                        } else {
+                            echo "❌ Skipping ${envName.toUpperCase()} — no version found."
+                        }
+                    }
+                }
+            }
+        }
+
+    }
+}
+
+------------------------------
+practice
+
+pipeline{
+
+
+agent any
+
+stages{
+
+stage(Checkout){
+steps{
+
+git "https://git.exampe.com"
+
+
+
+}
+
+stage('input'){
+
+
+def userInput = {
+input( message:"do you want to deploy",
+ok: "yes deploying"
+boleanparam(defaultValue:'true', name:'PROCEED', description:'To depoly')
+
+)
+env.input=userInput ? "true" : "false"// setting string value type
+echo 'input is ${env.input}'
+
+}
+
+
+
+}
+stage('envroinment setup'){
+
+steps{
+
+def envMap= [
+
+dev:'2.1.0',
+prod:'2.1.4',
+qa:'2.1.6'
+]
+
+//now justing printing to see the enviroinment setup
+
+envMap.each{
+envi, version ->
+
+if(env.input){
+echo 'the env ${env} is the version for ${version}'
+}else{
+echo 'the env${env} is not set with version value it is ${version}'
+
+
+}
+
+
+}
+
+
+}
+
+
+//fruits list
+stage('fruists looping'){
+steps{
+
+
+def fruits['apple', 'banana', 'oraneg']
+//using each loop
+fruits.each(
+fruit-> echo "${fruit}"
+
+)
+
+} }
+
+//  	deploymnet
+
+stage('Deploymnet'){
+
+steps{
+def envMap= [
+
+dev:'2.1.0',
+prod:'2.1.4',
+qa:'2.1.6'
+]
+
+when{
+
+expression{
+return env.PROCEED=='true'
+}
+
+steps{
+envMap.each{ envname, version->
+if(version){
+
+echo "deploying to env ${envname} to this ${version}"            //This checks if version is not null or empty  //This checks if version is not null or empty
+}
+}
+
+
+
+}else
+
+
+echo "❌ Skipping ${envName.toUpperCase()} — no version found."
+
+
+
+
+}
+
+}
+
+}
+}
+
+}
+}
+}
+
+
+}
+
+}
+
+
+}
+3467347acea44a77805555d5b6180352
+
+4084ca5ec8fd471ebd1735ea13695544
+
+}
+.java = source code
+
+javac compiles it into .class
+
+.class = what the JVM runs
+
+
+
+
+
+
+
+
++ echo '===> Locate Third.java'
+===> Locate Third.java
++ find . -name Third.java
+./Third.java
++ echo '===> Compile Third.java'
+===> Compile Third.java
++ find . -name Third.java -exec javac '{}' ';'
+Hello from Jenkins Java Project!
++ echo '===> list Third.java'
+===> list Third.java
++ find . -name Third.class
++ echo '===> Locate Third.class'
+===> Locate Third.class
++ find . -name Third.class
++ echo '===> Change to compiled class directory and run'
+===> Change to compiled class directory and run
+++ xargs dirname
+++ find . -name Third.class
+dirname: missing operand
+Try 'dirname --help' for more information.
++ cd ''
++ java Third
+
+
+
+structure:
+
+so all the files are stored in worksapce 
+wen the maven builds it will create a target folder
+the commands are then run in workspace
+ and the build from target folder is archived
+
+
+
+All project files are stored in the Jenkins workspace
+→This includes pom.xml, src/, etc.
+When Maven builds, it creates a target/ folder inside the workspace
+→ This is where Maven puts compiled .class files, .jar, etc.
+All commands (like mvn clean package) are run in the workspace root,
+→ Not inside target/ unless you explicitly cd target.
+The final .jar or other build artifacts from the target/ folder are archived
+
+archive files are then stored internally 
+Copies them into Jenkins' internal storage — this is outside the workspace.
+These files are stored as build artifacts, associated with the specific build number.
+
+to get the archived files:
+Go to your Jenkins job page.
+
+Click on a specific build (e.g., #12).
+
+You’ll see a section called "Archived Artifacts".
+
+You can download .jar, .war, logs, or anything you archived.s
+
+
+
+
+Command	What it Does
+mvn test	✅ Compiles main and test code, then runs unit tests
+mvn compile	✅ Only compiles the main code (no tests, no JAR)
+mvn clean	🧹 Deletes the target/ directory (cleans previous builds)
+mvn package	✅ Compiles code + runs tests + creates .jar (or .war) file
+mvn install	✅ Same as package, but also puts JAR into local .m2 repo
+mvn clean package	🧹 Clean + compile + test + package everything
+
+
+
+
+RETRY block:
+pipeline {
+    agent any
+    stages {
+        stage('Retry Build') {
+            steps {
+                retry(3) {
+                    sh 'curl http://unstable-api.com'
+                }
+            }
+        }
+    }
+}
+
+
+MATRIX:Run the same stage with multiple configs.
+pipeline {
+    agent any
+    stages {
+        stage('Matrix') {
+            matrix {
+                axes {
+                    axis {
+                        name 'OS'
+                        values 'linux', 'windows'
+                    }
+                    axis {
+                        name 'JDK'
+                        values '8', '11'
+                    }
+                }
+                stages {
+                    stage('Test') {
+                        steps {
+                            echo "Running tests on ${OS} with JDK ${JDK}"
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+
+PARALLEL
+pipeline {
+    agent any
+    stages {
+        stage('Parallel Testing') {
+            parallel {
+                stage('Unit Tests') {
+                    steps {
+                        echo 'Running unit tests...'
+                    }
+                }
+                stage('Integration Tests') {
+                    steps {
+                        echo 'Running integration tests...'
+                    }
+                }
+            }
+        }
+    }
+}
+
+triggers types:
+
+Trigger	Description
+githubPush()	        Triggered by GitHub push events via webhook. (GitHub plugin required)
+pollSCM('H/5 * * * *')	Polls the repo every 5 minutes. Use when webhook isn't available.
+cron('H 0 * * *')	Scheduled build. Example: daily at midnight.
+upstream()	        Triggered after another Jenkins job finishes.
+SCMTrigger	        Low-level trigger behind pollSCM. Not used directly in declarative syntax.
+GenericTrigger (from Generic Webhook Trigger plugin)	Can handle custom webhook events from any system, not just GitHub.
+
+
+
+  triggers {
+        cron('H 2 * * *') // Run daily at 2 AM (Hash-based load spreading)
+    }
+triggers {
+        pollSCM('H/5 * * * *') // Poll every 5 minutes
+    }
+------------------------------------------------------------------------------------------------------------------
+upstream:
+ Job-B will trigger only when Job-A completes with a SUCCESS status.
+triggers {
+    upstream(
+        upstreamProjects: 'Job-A',
+        threshold: hudson.model.Result.SUCCESS
+    )
+}
+
+
+manual trigger
+  steps {
+                build job: 'Job-B'
+            }
+
+This guarantees Job B runs after Job A. But remember, this bypasses the upstream() trigger logic.
+
+
+---------------------------------------------------------------------------------------------------------------------
+concurrent job
+ to run a job multiple times even though there is another job running
+
+1.like Build 1 is running if build is clicked build 2 will run without waiting in the queue
+
+2.for pipeline it is default, but for diabling we need to use options "{ disableConcurrentBuilds() }"
+
+3.for freestyle we need to configure
+
+
+
+Situation	                                                                You Use
+Want to allow multiple people/CI systems to trigger same job simultaneously	Concurrent Builds
+Want to run parts of a pipeline simultaneously (e.g., tests, builds)	        Parallel Stages
+
+
+
+
+ pollSCM('H/5 * * * *'):
+Jenkins polls (checks) the Git repository every 5 minutes.
+
+It checks: “Has anything changed since the last successful build?”
+
+If yes → job is triggered.
+
+If no → nothing happens.
+----------------------------------------------------------------------------------------------------
+
+Term	        What it is	                                   Example Platforms
+SCM	        A system to manage source code	                   Git, SVN, Mercurial
+SCM Host	A web service that hosts code repos	           GitHub, Bitbucket, GitLab
+VCS	        Another name for SCM (Version Control System)	   Same as SCM
+
+Platform	SCM used
+GitHub	Git
+Bitbucket	Git
+GitLab	Git
+Azure DevOps	Git/SVN
+
+Git = Source Code Management (SCM) tool
+It’s the actual technology that manages versioning of your source code.
+
+GitHub, Bitbucket, GitLab, etc. = Git Repository Hosting Services
+These are platforms that host your Git repositories.
+
+They provide:
+
+A web interface to manage code.
+------------------------------------------------------------------------------------------------
+
+Git is the SCM tool.
+
+GitHub/Bitbucket/GitLab are web-based Git hosting services.
+
+Jenkins uses Git to pull code from these services to build/deploy it.

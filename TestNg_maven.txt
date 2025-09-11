@@ -1,0 +1,140 @@
+TestNg_maven
+
+
+🔹 1. What is Maven Surefire Plugin?
+The Surefire plugin is Maven’s testing plugin used to:
+
+Run unit tests
+
+Integrate with test frameworks like TestNG and JUnit
+
+🔹 2. How does it pick which tests to run?
+By default:
+
+It scans and runs test classes matching the pattern:
+
+**/Test*.java
+**/*Test.java
+**/*Tests.java
+**/*TestCase.java
+🔹 3. Using TestNG XML with Surefire
+
+If you want to run tests as defined in your TestNG XML file (instead of by class scanning), you must configure Surefire accordingly.
+
+✅ Example:
+
+In your pom.xml:
+
+xml
+Copy
+Edit
+<build>
+  <plugins>
+    <plugin>
+      <groupId>org.apache.maven.plugins</groupId>
+      <artifactId>maven-surefire-plugin</artifactId>
+      <version>3.0.0</version>
+      <configuration>
+        <suiteXmlFiles>
+          <suiteXmlFile>testng.xml</suiteXmlFile>
+        </suiteXmlFiles>
+      </configuration>
+    </plugin>
+  </plugins>
+</build>
+🔹 4. What does this do?
+✅ This tells Surefire:
+
+“Run tests as per the suites and classes defined in testng.xml.”
+
+So only those tests specified in <classes> tags within your testng.xml will be executed.
+
+✅ Summary
+Scenario	                 Behavior
+No suiteXmlFile defined	         Surefire scans test classes based on default patterns
+suiteXmlFile defined	         Surefire runs tests as defined in TestNG XML, ignoring default scanning
+
+Let me know if you want to practice a full Maven + TestNG project setup with surefire plugin configuration for your upcoming Selenium Java interviews.
+
+
+
+
+
+
+=========================================================================================================
+
+You said:
+how does it run without testng 
+
+
+ChatGPT said:
+✅ Excellent conceptual question. Let’s clarify how Maven Surefire runs tests without TestNG XML.
+
+🔹 1. Default Behavior of Maven Surefire (without TestNG XML)
+When you don’t specify a testng.xml file in the Surefire configuration:
+
+Surefire automatically scans your project for test classes.
+
+It runs all classes that match these default naming patterns:
+
+
+**/Test*.java
+**/*Test.java
+**/*Tests.java
+**/*TestCase.java
+
+🔹 2. How does it know which framework to use?
+If you have TestNG annotations (like @Test) and TestNG dependency in your project:
+
+Surefire detects TestNG and runs those classes as TestNG tests.
+
+If you have JUnit annotations (like @Test) and JUnit dependency:
+
+Surefire runs them as JUnit tests.
+
+✅ It auto-detects based on annotations and dependencies present.
+
+🔹 3. Example without testng.xml
+If you have a class:
+
+import org.testng.annotations.Test;
+
+public class MyTest {
+    @Test
+    public void sampleTest() {
+        System.out.println("Running sample test");
+    }
+}
+And in your pom.xml you have:
+
+xml
+Copy
+Edit
+<dependency>
+  <groupId>org.testng</groupId>
+  <artifactId>testng</artifactId>
+  <version>7.9.0</version>
+  <scope>test</scope>
+</dependency>
+
+
+Then running:
+
+
+mvn test
+
+➡️ Surefire scans for this class, detects TestNG annotations, and executes it without any testng.xml.
+
+🔹 4. When do you need testng.xml?
+You use testng.xml when you want:
+
+To define specific suites, groups, or method inclusion/exclusion
+
+Parallel execution configurations
+
+Control over execution order and dependencies
+
+✅ Summary
+Scenario	    Behavior
+No testng.xml	   Surefire scans all test classes matching patterns and runs them based on detected framework (TestNG/JUnit)
+With testng.xml	   Surefire runs only tests defined in the XML file

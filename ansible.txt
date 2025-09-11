@@ -1,0 +1,371 @@
+public and private key 
+
+why we use public key not private in managed node in ansible 
+
+"private key is like your secret signature."
+"public key is like a mathematical lock that can only be opened with that specific signature."
+
+e.g
+so like there are 10 systems all have public key now when i login in they will check my private key matches wiht the public key provided
+
+ssh user@managed-node-1
+That server looks into your ~/.ssh/authorized_keys file.
+
+Sees your public key stored there.
+
+Says: "Okay, I’ll accept this if your private key matches!"
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------
+Control node connects to managed node.
+
+Managed node says:
+
+"Prove you own the private key that matches this public key I have."
+
+Managed node sends a random challenge string (kind of like a test question).
+
+Your control node signs that challenge using your private key (without exposing the key itself).
+
+
+
+The challenge is random every time
+
+The private key signs it
+
+The public key verifies it
+
+If it passes the math check → you're in
+
+No secrets ever exchanged
+
+===================================================================================================================
+2 ways of providng instructions
+YAMAL-----playbooks
+Adhoc commands
+
+for simple activities e.g install ngnix, restart the server
+
+adhoc command e.g:
+ansible all -m ping -u your_username — Explanation
+Part	What it does
+ansible	The command-line tool for running Ansible tasks
+all	Targets all hosts listed in your inventory (/etc/ansible/hosts)
+-m ping	Tells Ansible to use the ping module, which checks SSH connectivity
+-u your_username	Use your_username to SSH into the managed node
+
+
+
+--become means:
+“Run the command with elevated (sudo) privileges.”
+
+Ansible SSHs into the managed node as your_user
+
+Then it uses sudo to "become root" (or any user you specify with --become-user)
+
+
+Option	Meaning
+--become-user deploy	Become the deploy user instead of root
+--ask-become-pass	Prompt for sudo password
+
+
+
+✅ Command 1
+ansible all -m file -a "path=/tmp/deploy_dir state=directory" -u your_user --become --become-user deploy --ask-become-pass
+
+-u your_user → SSH login as your_user.
+
+--become → Use sudo.
+
+--become-user deploy → After login, run command as user deploy.
+
+--ask-become-pass → Prompt for sudo password.
+
+🧠 You use this when you want to log in as one user and run commands as a different user (not root), like deploy.
+
+✅ Command 2
+bash
+Copy
+Edit
+ansible all -m file -a "path=/tmp/deploy_dir state=directory" -u your_user --become --ask-become-pass
+🔍 Explanation:
+
+-u your_user → SSH as your_user.
+
+--become → Use sudo to become root (default).
+
+--ask-become-pass → Prompt for password.
+
+🧠 This is the most common case — SSH as normal user, then use sudo to do admin tasks as root.
+
+✅ Command 3
+bash
+Copy
+Edit
+ansible all -m file -a "path=/tmp/deploy_dir state=directory" -u your_user --become
+🔍 Explanation:
+
+Same as Command 2, but without prompting for password.
+
+⚠️ This only works if:
+
+Your user has passwordless sudo setup (i.e., no password is required when running sudo).
+
+
+
+
+
+
+
+playbooks:
+
+for bigger activities
+
+reusable , can be shared with other teams , can be used as modules and roles
+
+
+
+loops :
+{{ file_status.results[loop.index0].stat.exists }}
+
+file_status: This is the variable where the results of the stat module are stored using the register keyword.​
+
+.results: When you use register with a loop, Ansible stores the output as a list under the results attribute. Each item in this list corresponds to an iteration of the loop. ​
+Ansible Documentation
+
+cn-ansibledoc.readthedocs.io
+
+
+[loop.index0]: This accesses the current index of the loop (starting from 0) to retrieve the corresponding item from the results list.​
+
+.stat: Each item in the results list is a dictionary that includes a stat key, which contains another dictionary with details about the file.​
+
+.exists: This is a key within the stat dictionary that indicates whether the file exists (true or false). 
+
+
+
+
+-----------------------------------------------------------------------------------------------------------------------------
+
+to write a custom andible odules:
+
+ansible.module_utils.basic.AnsibleModule
+
+
+AnsibleModule is a helper class provided by Ansible (via ansible.module_utils.basic) that:
+
+Handles parameter parsing, input validation, check mode, exit logic, and JSON output for your custom module.
+
+It saves you from writing a lot of boilerplate code.
+
+===============
+
+Create a Python file (e.g., my_module.py)
+
+Use the AnsibleModule helper from ansible.module_utils.basic
+
+Define accepted arguments
+
+Add your logic
+
+Return result in JSON
+
+
+
+
+eg
+#!/usr/bin/python
+
+from ansible.module_utils.basic import AnsibleModule
+
+def run_module():
+    module_args = dict(
+        name=dict(type='str', required=True)
+    )
+
+    result = dict(
+        changed=False,
+        message=''
+    )
+
+    module = AnsibleModule(
+        argument_spec=module_args,
+        supports_check_mode=True
+    )
+
+    name = module.params['name']
+    result['message'] = f"Hello, {name}!"
+
+    module.exit_json(**result)
+
+def main():
+    run_module()
+
+if __name__ == '__main__':
+    main()
+
+===================
+Save as: my_custom_module.py
+You can place it in your playbook structure like this:
+
+==========================
+library/
+└── my_custom_module.py
+Then call it from your playbook:
+
+yaml
+Copy
+Edit
+- hosts: localhost
+  tasks:
+    - name: Run my custom module
+      my_custom_module:
+        name: Pavitha
+
+
+
+
+
+
+6
+
+You need to execute a playbook against only those hosts that belong to two different groups at the same time. How would you do that?
+Answer:
+Use an intersection of groups in your inventory using patterns.
+
+Example:
+
+bash
+Copy
+Edit
+ansible-playbook -i inventory.ini playbook.yml -l 'webservers:&dbservers'
+Explanation:
+
+webservers:&dbservers = only hosts in both groups
+
+webservers:dbservers = union (any host in either group)
+
+- hosts: webservers:&dbservers
+
+
+========================================
+
+
+✅ 1. You want to deploy an application on a cluster of servers but only restart services if a configuration file changes. How would you do that in Ansible?
+Answer:
+You should use handlers and notify. A handler is only triggered when a task reports a change.
+
+Example:
+
+yaml
+Copy
+Edit
+tasks:
+  - name: Copy updated config
+    copy:
+      src: myapp.conf
+      dest: /etc/myapp/myapp.conf
+    notify: Restart myapp service
+
+handlers:
+  - name: Restart myapp service
+    service:
+      name: myapp
+      state: restarted➡️ This ensures the service restarts only if the config file changed.
+--------------------------------------------------------------------------------------------------------------------------
+✅ 2. How would you manage multiple environments (dev, stage, prod) in an Ansible project?
+Answer:
+Use a directory structure and inventory separation per environment.
+
+Example structure:
+
+r
+Copy
+Edit
+inventories/
+├── dev/
+│   ├── hosts
+│   └── group_vars/
+├── stage/
+│   ├── hosts
+│   └── group_vars/
+├── prod/
+│   ├── hosts
+│   └── group_vars/
+Then run the playbook like this:
+
+bash
+Copy
+Edit
+ansible-playbook -i inventories/prod/hosts site.yml
+You can also manage environment-specific variables using:
+
+group_vars/
+
+host_vars/
+
+--extra-vars (-e env=prod)
+-------------------------------------------------------------------------------------------------------------------------------------------------
+✅ 3. You need to execute a playbook against only those hosts that belong to two different groups at the same time. How would you do that?
+Answer:
+Use an intersection of groups in your inventory using patterns.
+
+Example:
+
+bash
+Copy
+Edit
+ansible-playbook -i inventory.ini playbook.yml -l 'webservers:&dbservers'
+Explanation:
+
+webservers:&dbservers = only hosts in both groups
+
+webservers:dbservers = union (any host in either group)
+
+In playbook:
+
+yaml
+Copy
+Edit
+- hosts: webservers:&dbservers
+--------------------------------------------------------------------------------------------------------------
+✅ 4. What strategies can you use in Ansible to avoid hardcoding values in playbooks?
+Answer:
+Several best practices:
+
+Strategy	Description
+✅ vars_files	Load variables from external YAML files
+✅ group_vars/ and host_vars/	Per-group or per-host variables
+✅ extra_vars (-e)	Pass variables at runtime
+✅ defaults/main.yml	Set default values inside roles
+✅ set_fact	Set dynamic variables at runtime
+✅ lookup plugins	Load values from files, environment, or secrets dynamically
+----------------------------------------------------------------------------------------------------------------
+✅ 5. How do you troubleshoot an Ansible playbook that hangs or fails silently?
+Answer:
+Here are effective ways:
+
+Method	Description
+🔹 -vvv	Run with high verbosity: ansible-playbook -vvv playbook.yml
+🔹 --start-at-task	Resume from a specific task
+🔹 timeout options	Add timeout to wait_for, command, or SSH connection
+🔹 Logs & debug	Use debug module or ansible.cfg logging
+🔹 Dry run	Use --check to test without changing anything
+🔹 ansible.cfg tuning	Set timeout, gathering, and retry_files_enabled to tune behavior
+🔹 Check connectivity	Use ansible all -m ping -i inventory.ini to verify SSH access
+
+Also, make sure:
+
+SSH keys are working
+
+No interactive prompts (e.g., missing vault passwords or prompts in scripts)
+
+Handlers aren't stuck waiting
+
+✅ Summary of All Answers:
+Question	Key Tool/Concept
+Restart only on config change	notify + handlers
+Manage environments	inventory/, group_vars/, directory structure
+Target hosts in 2 groups	group1:&group2 pattern
+Avoid hardcoding	vars_files, group_vars, -e, defaults, lookup
+Troubleshoot failures	-vvv, debug, ping, logs, --start-at-task
+

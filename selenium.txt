@@ -1,0 +1,179 @@
+selenium
+
+ 1. Java Basics for Selenium
+Data types, loops, conditions, arrays
+
+OOP Concepts: Inheritance, Polymorphism, Abstraction, Encapsulation
+
+Exception Handling
+
+Collections Framework: List, Set, Map, Iterator
+
+File I/O (for reading/writing to files)
+
+✅ 2. Selenium WebDriver Core
+Setup: Installing Selenium, WebDriverManager
+
+Opening browsers: Chrome, Firefox, Edge
+
+Locators: id, name, xpath, cssSelector, linkText, etc.
+
+Actions:
+
+click(), sendKeys(), getText(), isDisplayed()
+
+Waits:
+
+Implicit Wait
+
+Explicit Wait
+
+Fluent Wait
+
+Browser Navigation: get(), navigate().to(), back(), forward(), refresh()
+
+Handling WebElements:
+
+Dropdowns (Select)
+
+Alerts
+
+Frames / iFrames
+
+Windows / Tabs
+
+Mouse Actions (Actions class)
+
+Drag and Drop
+
+Keyboard actions (Keys class)
+
+Screenshots
+
+Cookies
+
+JavaScriptExecutor
+
+✅ 3. XPath and CSS in Depth
+Basic and advanced XPath:
+
+//tag[@attr='val']
+
+contains(), starts-with(), text()
+
+Axes: following-sibling, preceding, ancestor, parent, etc.
+
+CSS Selectors
+
+✅ 4. TestNG Framework
+TestNG Setup
+
+Annotations: @Test, @BeforeMethod, @AfterMethod, @BeforeClass, etc.
+
+priority, enabled, dependsOnMethods
+
+Parameterization
+
+Assertions (Hard vs Soft Assert)
+
+DataProvider
+
+Groups
+
+Parallel Execution with XML
+
+Listeners (ITestListener)
+
+✅ 5. Automation Framework Design (Very Important)
+Types:
+
+Modular
+
+Data Driven (using Excel)
+
+Keyword Driven
+
+Hybrid
+
+POM (Page Object Model)
+
+PageFactory
+
+Utility classes (ExcelUtils, WaitUtils)
+
+BaseTest class
+
+Config files (using .properties)
+
+Log4j (Logging)
+
+TestNG XML setup for suites
+
+Maven + POM.xml
+
+✅ 6. Tools Integration
+Maven (Dependency management)
+
+Jenkins (CI/CD + Scheduled runs)
+
+Git (Version Control)
+
+Extent Reports / Allure Reports
+
+Docker (for grid / containerized runs – optional but a plus)
+
+✅ 7. Selenium Grid / Parallel Execution
+Local parallel via TestNG XML
+
+Remote execution
+
+Selenium Grid architecture
+
+Nodes and Hub setup
+
+Docker-based Grid
+
+✅ 8. Real Time Scenarios & Best Practices
+How to handle dynamic elements
+
+Page load issues / sync issues
+
+Flaky tests
+
+Reusability via POM
+
+Test reporting
+
+Retry logic
+
+Logging & debugging
+
+✅ 9. Common Interview Questions
+How is your framework designed?
+
+What challenges did you face?
+
+How do you handle waits?
+
+What’s the difference between findElement and findElements?
+
+How do you handle stale element exceptions?
+
+Describe your CI/CD process
+
+How do you validate broken links?
+
+How do you perform file upload/download?
+
+What are your best practices?
+
+✅ 10. Practice Tasks (I’ll give you real use cases):
+Write a test to login into a sample site
+
+Build POM for a website like Amazon/Flipkart
+
+Handle Ajax search suggestions
+
+Automate a form with dropdowns, checkboxes, file upload
+
+Generate a test report after execution

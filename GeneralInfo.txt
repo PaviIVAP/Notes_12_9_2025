@@ -1,0 +1,212 @@
+🔍 1. What actually happens during build and debug?
+✔️ When you build your C# code:
+
+The compiler (csc) converts your .cs files into IL code in a .dll or .exe.
+
+At the same time, it generates a .pdb (symbols) file.
+
+✅ 2. What does the .pdb (symbols) file contain?
+It stores:
+
+Mapping between IL instructions ↔️ your original source code lines
+
+Method names
+
+Class names
+
+Variable names
+
+Line numbers
+
+✅ 3. What happens when you debug?
+✔️ When you run your program in debug mode with breakpoints:
+
+The debugger runs the compiled IL code from your .dll or .exe.
+
+It loads the .pdb symbols file alongside.
+
+When execution reaches a breakpoint:
+
+The symbols tell the debugger:
+
+Which IL instruction maps to which source code line.
+
+Which variable names to display in the watch window.
+
+That’s how step into, step over, step out also work – the debugger uses .pdb mappings to show you your original C# lines.
+
+======================
+HOW THE IDE IDENTIFIES THE TO STOP AT BREAK POINT
+and diff btw bin/debug and bin/release
+
+Aspect	                                 Debug	                                                      Release
+-----------------------------------------------------------------------------------------------------------------------------------
+Folder	                                 bin/Debug/	                                              bin/Release/
+Purpose	                                 For development and debugging	                              For final production deployment
+Optimization	                        ❌ No optimizations                                           ✅ Optimizations enabled
+                                         (easier debugging)	                                      (better performance)                                                                                                    
+.pdb symbols file	                ✔️ Generated                                                ⚠️ May generate limited symbols or none, depending on settings
+                                       (includes full debug symbols for breakpoints, step-in/out, variable inspection)
+File size	                        Larger (includes debug info, no optimizations)	               Smaller and faster (optimized IL code)
+Code execution	                        Slower (no optimizations)	                               Faster (optimized code)
+Usage	                                Local testing, debugging	                               Production runs, deployment
+
+
+“The debugger runs the IL code line by line, and alongside it uses the .pdb file to map to original code lines. When it reaches an IL instruction that maps to a line with a breakpoint, it pauses and shows variables using the .pdb mapping.”
+====================================
+WHAT IS DLL FILES
+
+1..dll files contain reusable code that other programs can call and use, making them ‘libraries’ of functionality.”
+2.Because it stores functions, classes, and methods that:
+
+3.Can be used by multiple projects or applications
+
+4.Do not run on their own (unlike an .exe)
+
+=============================================
+HOW THE CODE INDENTIFIES THE TESTSCRIPT FROM EXCEL AND RUNS
+EG CODE:
+
+using System;
+using System.Reflection;
+
+[AttributeUsage(AttributeTargets.Class)]
+public class ScriptAttribute : Attribute
+{
+    public string DisplayName { get; set; }
+}
+
+[Script(DisplayName = "Test Script")]
+public class MyTest { }
+
+class Program
+{
+    static void Main()
+    {
+        // Get the type
+        Type type = typeof(MyTest);
+
+        // Get the custom attribute applied on it
+        var attr = (ScriptAttribute)Attribute.GetCustomAttribute(type, typeof(ScriptAttribute));
+
+        // Print the DisplayName property from metadata
+        Console.WriteLine(attr.DisplayName); // Output: Test Script
+    }
+}
+
+You decorate a class with [Script(DisplayName="Test Script")].
+
+The compiler stores this info in the assembly’s metadata table.
+
+At runtime, your program:
+
+Uses reflection to read metadata
+
+Finds ScriptAttribute applied on MyTest
+
+Fetches the DisplayName property value stored in metadata.
+
+EXPLANATION:
+----------------
+
+What is typeof(MyTest)?
+
+typeof() is a C# operator that gets the Type object representing the class MyTest.
+
+🔷 Think of it as:
+
+➡️ “Give me a blueprint reference of MyTest class so I can inspect its properties, methods, and attributes.”
+
+✔️ The variable type now holds information about the class MyTest itself, not an instance of it.
+
+🔷 Line 2:
+--------------
+
+var attr = (ScriptAttribute)Attribute.GetCustomAttribute(type, typeof(ScriptAttribute));
+✔️ Breakdown:
+
+Attribute.GetCustomAttribute(...)
+
+➡️ This is a static method from the System.Attribute class.
+
+➡️ It fetches the attribute applied on a class, method, or property.
+
+Parameters passed:
+
+type: The Type object we got in line 1 (the class you want to inspect).
+
+typeof(ScriptAttribute): Tells it which attribute to look for. Here, ScriptAttribute.
+
+Returns:
+
+It returns an object of type Attribute if it finds that attribute.
+
+You cast it to ScriptAttribute so you can access its properties like DisplayName.
+
+
+ Because GetCustomAttribute returns it as a general Attribute object, but we know it's a ScriptAttribute, so we cast:(ScriptAttribute)
+
+ANALOGY
+----------:
+
+typeof(MyTest): “Give me the file.”
+
+GetCustomAttribute(...): “Read its label to see if it has a ScriptAttribute.”
+
+Casting to ScriptAttribute: “I know this label has DisplayName info, so treat it as a ScriptAttribute label and read its DisplayName.”
+
+
+ScriptAttribute is a normal C# class.
+
+But because it inherits from Attribute, it becomes an attribute class.
+
+
+==============================================================================
+
+
+HOW THE CONFIG FILES IS FETCHED
+
+the compiled code has the path and the bin has the config file compiled so it fetches the config doirectly from th bin
+
+
+ChatGPT said:
+✅ Yes, your understanding is exactly correct.
+
+Here is your statement, broken down and confirmed:
+
+🔷 Your statement:
+The compiled code has the path, and the bin has the config file compiled, so it fetches the config directly from the bin.
+
+✔️ Breaking it down:
+
+“The compiled code has the path”
+➔ ✅ Correct.
+Your source code specifies the path (e.g. "Data\\myconfig.json"), and this string becomes part of the compiled DLL/EXE.
+
+“The bin has the config file compiled”
+➔ ✅ Almost correct phrasing.
+🔹 The config file itself is NOT compiled.
+🔹 Instead, it is copied as a raw file into the bin folder during build.
+
+“So it fetches the config directly from the bin”
+➔ ✅ Correct.
+When your code runs, it uses the path in your compiled code to fetch the file from bin (or its subfolder) where it was copied.
+
+✅ Final refined phrasing:
+✔️ “The compiled code has the path. During build, the config file is copied into the bin folder as-is. At runtime, the code uses the path to fetch it directly from bin.”
+
+ typeof ➔ Gets Type object (blueprint)
+✔️ Reflection using that Type ➔ Gets methods, variables, attributes, etc.
+
+
+Once you have:
+
+Type t = typeof(MyClass);
+You can now use reflection methods to get:
+
+What you can fetch	            Method used
+✔️ All methods	                    t.GetMethods()
+✔️ All properties	            t.GetProperties()
+✔️ All fields (variables)	    t.GetFields()
+✔️ All constructors	            t.GetConstructors()
+✔️ All custom attributes applied]   t.GetCustomAttributes()

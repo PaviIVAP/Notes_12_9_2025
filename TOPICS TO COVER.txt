@@ -1,0 +1,335 @@
+TOPICS TO COVER
+SELENIUM
+=================================================================
+
+
+2. Locators and WebElement interactions
+Locators: id, name, className, tagName, linkText, partialLinkText, xpath, cssSelector
+
+Finding elements (findElement, findElements)
+
+Actions on elements: click, sendKeys, getText, getAttribute, isDisplayed, isEnabled, isSelected
+
+Dynamic XPaths
+
+🔄 3. Waits
+Thread.sleep() (not recommended in automation)
+
+Implicit Wait
+
+Explicit Wait (WebDriverWait, ExpectedConditions)
+
+Fluent Wait
+
+🔧 4. Advanced User Interactions (Actions class)
+Mouse hover
+
+Right click (context click)
+
+Double click
+
+Drag and drop
+
+Keyboard interactions (sendKeys with Keys class)
+
+🔗 5. Handling different UI elements
+Dropdowns (Select class)
+
+Checkboxes
+
+Radio buttons
+
+🪟 6. Handling Windows, Alerts, and Frames
+Multiple windows / tabs (getWindowHandles, switchTo)
+
+Alerts (accept, dismiss, getText, sendKeys)
+
+Frames and iframes (switchTo.frame)
+
+📷 7. Screenshots
+Taking screenshots of pages
+
+Screenshots of WebElements
+
+🔍 8. Advanced Concepts
+JavaScriptExecutor usage
+
+Scrolling
+
+Page load strategies
+
+Headless browser testing (Chrome headless mode)
+
+File upload and download automation
+
+🔢 9. Data-driven testing
+Reading from Excel (Apache POI)
+
+Parameterization with TestNG @DataProvider
+
+🏷️ 10. TestNG Integration
+What is TestNG
+
+Writing TestNG test cases
+
+Annotations (@Test, @BeforeMethod, @AfterMethod, @BeforeClass, etc.)
+
+Assertions
+
+Parallel execution
+
+TestNG XML
+
+Groups, priorities, dependencies
+
+⚙️ 11. Page Object Model (POM)
+Concept of POM
+
+Creating Page classes and Test classes
+
+PageFactory and @FindBy
+
+🔄 12. Framework Design
+Types of frameworks (Data-driven, Keyword-driven, Hybrid, BDD)
+
+Building a hybrid framework with POM + TestNG + Excel + Log4j + Extent Reports
+
+Maven for dependency management
+
+Git for version control
+
+Jenkins for CI/CD
+
+🧪 13. BDD with Cucumber
+What is Cucumber
+
+Gherkin syntax
+
+Feature files, Step Definitions, Runners
+
+Integrating Selenium with Cucumber
+
+🖥️ 14. Selenium Grid
+Concept of Grid
+
+Parallel execution in different browsers and machines
+
+📈 15. Reporting
+TestNG default reports
+
+Extent Reports integration
+
+🛠️ 16. Real-time project practices
+Handling stale element exceptions
+
+Synchronization strategies
+
+Utility classes creation
+
+Designing reusable libraries
+
+
+
+
+
+=================================================================================
+JAVA
+1. OOP Concepts (Foundation)
+🔹 Encapsulation, Inheritance, Polymorphism, Abstraction
+
+🔧 Practical: Create a User class with private fields, public getters/setters, and extend it with an AdminUser.
+
+💬 Interview Q: “What’s the difference between method overloading and overriding?”
+
+2. Collections Framework
+🔹 List, Set, Map, Queue, and their implementations (ArrayList, HashSet, HashMap, etc.)
+
+🔧 Practical: Parse API response into a List<Map<String, Object>> and filter based on conditions.
+
+💬 Interview Q: “How does HashMap handle collisions internally?”
+
+3. Exception Handling
+🔹 try-catch-finally, custom exceptions, checked vs unchecked
+
+🔧 Practical: Wrap REST Assured calls in try-catch blocks and log failures.
+
+💬 Interview Q: “What’s the difference between throw and throws?”
+
+4. Java 8+ Features
+🔹 Streams, Lambdas, Functional Interfaces, Optional
+
+🔧 Practical: Use stream().filter().collect() to validate API response data.
+
+💬 Interview Q: “How would you remove duplicates from a list using streams?”
+
+5. Multithreading & Concurrency
+🔹 Runnable, Thread, ExecutorService, synchronized, volatile
+
+🔧 Practical: Simulate parallel API calls using ExecutorService.
+
+💬 Interview Q: “What’s the difference between synchronized and Lock?”
+
+6. File I/O & Serialization
+🔹 Read/write files, JSON serialization with Jackson
+
+🔧 Practical: Convert POJO to JSON and vice versa using ObjectMapper
+
+💬 Interview Q: “How does Java handle object serialization?”
+
+7. Design Patterns
+🔹 Singleton, Factory, Strategy, Builder
+
+🔧 Practical: Use Builder pattern for creating test data objects
+
+💬 Interview Q: “How would you implement Singleton in a thread-safe way?”
+
+8. JVM Internals
+🔹 Memory model, GC, class loading
+
+💬 Interview Q: “What are the different memory areas in JVM?”
+
+
+
+
+
+===========================================================================================
+DOCKER
+
+
+1. Dockerfile Deep Dive
+Difference between CMD vs ENTRYPOINT
+
+Multi-stage builds
+
+Caching & layers
+
+Best practices in Dockerfile
+
+📦 2. Volumes & Persistent Storage
+Bind mounts vs named volumes
+
+Use-cases for each
+
+Volume-related commands
+
+🌐 3. Docker Networks
+Bridge, Host, and None networks
+
+Creating custom networks
+
+Linking containers for communication
+
+🤝 4. Docker Compose (Multi-container setup)
+docker-compose.yml structure
+
+Example with frontend + backend + database
+
+depends_on, build, volumes, networks
+
+🔐 5. Secrets & Environment Variables
+Handling credentials securely
+
+.env files with Compose
+
+Docker secrets (Swarm)
+
+🔁 6. Restart Policies
+--restart always, on-failure, etc.
+
+Ensuring services recover from failure
+
+🧪 7. Debugging Docker Containers
+docker logs
+
+docker exec -it
+
+Shell into containers
+
+Healthchecks
+
+⚙️ 8. Docker in CI/CD
+Integrating Docker with Jenkins pipelines
+
+Building Docker images in Jenkins
+
+Pushing to Docker Hub or private registry
+
+Deploying with Docker Compose via Jenkins
+
+
+===============================================================================================
+java programs
+
+String Manipulation
+Reverse a string without using built-in methods
+
+Check if a string is a palindrome
+
+Count vowels and consonants
+
+Remove duplicate characters
+
+Find the first non-repeating character
+
+🔢 Number Logic
+Swap two numbers without a third variable
+
+Check if a number is prime
+
+Generate Fibonacci series
+
+Find factorial using recursion
+
+Armstrong number check
+
+📊 Array & Collection Challenges
+Find the largest/smallest element in an array
+
+Remove duplicates from an array
+
+Sort an array without using built-in sort
+
+Frequency count using Map
+
+Intersection and union of two arrays
+
+🧮 Java Collections (your specialty!)
+Iterate and mutate a List safely
+
+Remove elements from a Set during iteration
+
+Sort a Map by values
+
+Use LinkedHashSet to preserve insertion order
+
+Convert between List, Set, and Map
+
+🧪 Automation-Oriented Programs
+Read/write JSON using Jackson or Gson
+
+Deserialize API response into POJO
+
+Validate schema of REST response
+
+Retry failed tests using TestNG listeners
+
+Use DataProvider to run tests with multiple inputs
+
+🧠 Logic & Puzzles (often asked in interviews)
+Find missing number in a sequence
+
+Detect duplicates in a list
+
+Anagram check
+
+Print patterns (triangles, pyramids)
+
+Convert Roman numerals to integers
+
+
+Docker Daemon----handles container setup and orchestration
+
+Container Runtime---- handles container execution and isolation
+
+
+

@@ -1,0 +1,84 @@
+K8
+
+
+
+ClusterIP – Internal Microservice Communication
+Scenario: You have a backend API and a frontend app running in the same cluster. The frontend needs to call the backend.
+
+yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: backend-service
+spec:
+  selector:
+    app: backend
+  ports:
+    - port: 80
+      targetPort: 3000
+  type: ClusterIP
+🧠 Why: The frontend can reach the backend via http://backend-service without worrying about Pod IPs. No external exposure needed.
+
+2️⃣ NodePort – Quick External Access for Dev/Test
+Scenario: You’re testing a new app and want to access it from your laptop without setting up a cloud load balancer.
+
+yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: test-app
+spec:
+  selector:
+    app: test
+  ports:
+    - port: 80
+      targetPort: 8080
+      nodePort: 30007
+  type: NodePort
+🧠 Why: You can access the app at http://<NodeIP>:30007. Great for quick demos or internal tools.
+
+3️⃣ LoadBalancer – Public Access in Cloud
+Scenario: You’re deploying a production-grade web app on AWS and want users to access it via a public IP.
+
+yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: prod-web
+spec:
+  selector:
+    app: web
+  ports:
+    - port: 443
+      targetPort: 8443
+  type: LoadBalancer
+🧠 Why: Kubernetes asks AWS to provision a public IP and load balancer. Users can access your app securely via HTTPS.
+
+4️⃣ ExternalName – Redirect to External API
+Scenario: Your app needs to call a third-party payment API, but you want to abstract the DNS name.
+
+yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: payment-api
+spec:
+  type: ExternalName
+  externalName: api.stripe.com
+🧠 Why: Your app can call http://payment-api and Kubernetes will resolve it to api.stripe.com. Clean and centralized DNS management.
+
+5️⃣ Headless Service – Stateful Database Cluster
+Scenario: You’re deploying a Cassandra database and each node needs to discover others directly.
+
+yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: cassandra
+spec:
+  clusterIP: None
+  selector:
+    app: cassandra
+  ports:
+    - port: 9042
+🧠 Why: DNS returns all Pod IPs. Cassandra nodes can connect directly to each other for replication and clustering.

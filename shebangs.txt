@@ -1,0 +1,105 @@
+SSH: Used to work inside the EC2 instance.
+Example: Installing software or debugging an issue on the VM itself.
+
+AWS CLI: Used to control the EC2 instance and other AWS services.
+Example: Creating an instance, changing its configuration, or interacting with S3.
+
+
+while writing a shell script the line
+
+#!/bin/bash is used "shebangs"or "hashbangs" tells the interpreter that it should use bash shell to
+to execute script
+
+normal example to run
+
+vim hello.sh -----vim is an editor for linux which allows to write using the 
+i -insert to write :W for savings :qw fo saving and exiting
+
+chmod +x hello.sh------to make it executable
+
+./hello.sh to execute
+
+
+chmod +x helllo.sh ----changing mode to executable
+chmod us used to chnage the permission of a file
+w-write, r-read, x-execute
+owener-u,group-g,others-o------permission categories
+symbolic/octal mode (u,g,o,+,-,=,777,755)
+
+
+eg
+
+chmod u+x file.sh---ading execute permissionto owner 
+chmod g-w removing write permission to the group
+chmod a+r file.text  give read permissio ot all
+
+octal mode:
+4-read
+2-write
+1-execute
+
+chmod 755 hello.text
+here o 7 = read(4)+write(2)+execute(1)
+g 5=read (4)+execute(1)
+
+
+to see current permission
+ls -l
+
+-rwxr-xr--==
+owner group others
+r+w+e r+e    r
+
+
+set -x  =enabling debugg mode  set +x disbaling debug mode
+
+lets us sees the actual valueEvery command and its expanded form is visible in the output.
+Using set -x shows the exact commands being executed, along with their expanded values as they are run in the script
+
+
+jq is used to get spcific value so that the requireed data is got 
+
+jq==used toprocess,parse,manipulate json data in linux environment
+uses:
+extract specifc elemenst from a json file
+modify or reformat
+pretty-rint
+mapping,reducing,grouping json elements
+
+it is a JSON parser used in linux
+
+Reads JSON:Converts a JSON string into a data structure (like a dictionary, object, or list).
+Validates JSON: Ensures the JSON syntax is correct (e.g., proper brackets, keys are quoted, etc.).
+Extracts Data: Allows users to access specific values or modify data within the JSON structure.
+Generates JSON: Many parsers also allow converting structured data back into JSON format.
+
+
+ls -l==list long format means shows the detailed information along with the files and directories
+
+Directories have a d at the beginning.
+Regular files have a -.
+
+
+
+
+
+mv file1 folder1/
+: Move a File to a Sibling Directory (relative path)
+
+If you're inside folderA and you want to move a file to folderB (which is at the same level as folderA), you can do this:
+
+bash
+Copy
+Edit
+mv file1 ../folderB/
+No absolute path needed, just relative path (../folderB/).
+
+------------------------------------
+
+shell/terminal
+
+You type pwd (print working directory) in the terminal.
+The shell interprets it, asks the OS for the current directory, and returns the result.
+
+shell scritping :
+echo-to add comments

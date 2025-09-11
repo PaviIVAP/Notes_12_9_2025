@@ -1,0 +1,562 @@
+Selenium
+
+
+WebDriver comes from Selenium library.
+WebDriverManager comes from its own external library and is not related to WebDriver interface definition.
+
+
+this is how selenium works:
+“The script uses the Selenium API from the Selenium dependency to create WebDriver instances and call methods like click, get, and sendKeys. The browser-specific driver executable (e.g. chromedriver.exe), which can be downloaded and set up automatically using WebDriverManager, acts as a bridge between Selenium and the browser to perform these actions.”
+
+
+===========================================================================================================
+
+
+"Without WebDriverManager or manual setup, it cannot communicate with the browser.
+Results in IllegalStateException or WebDriverException indicating driver not found."
+
+"WebDriverManager helps with browser compatibility issues by automatically downloading and managing the 
+correct version of browser driver executables that are compatible with the browser installed on the system.
+This eliminates manual effort to check for browser-driver version compatibility, 
+ensuring that Selenium scripts run smoothly without version mismatch errors."
+
+=================================================================================
+
+"Given:
+
+
+<div id="grandparent">
+  <div id="parent">
+    <span id="child">Hello</span>
+  </div>
+</div>
+
+✅ Using parent::
+
+
+//span[@id='child']/parent::div
+➡️ Returns the div with id="parent"
+
+✅ Using ancestor::
+
+//span[@id='child']/ancestor::div
+➡️ Returns:
+
+div id="parent" (parent div)
+
+div id="grandparent" (grandparent div)
+
+🔴 Summary:
+✔️ parent:: ➔ direct parent only
+✔️ ancestor:: ➔ all ancestors upwards
+
+
+"
+
+==============================================================
+"   . dot 
+
+so its like saying find the element within that xpath
+product --the xpath to be searched
+inside that search for span
+
+
+ChatGPT said:
+✅ Exactly. You’ve got it perfectly.
+
+🔷 ✔️ Simplified understanding:
+When you write:
+
+
+product.findElement(By.xpath(".//span"))
+➡️ You’re saying:
+
+✅ “Inside this product WebElement, find any descendant <span> element.”
+
+🔷 Breakdown
+✔️ product ➔ refers to a specific product block you located.
+✔️ .//span ➔ means search for <span> starting from this product block as the root, not from the entire page.
+
+"
+ If you used //span instead:
+
+It would search for all <span> elements on the entire page, ignoring the product context."
+
+=================================================================================================================================
+
+Symbol / Axis	          Meaning
+--------------------------------------------
+/	                  Direct child (1 step down)
+//	                  Any descendant (any level down)
+parent::	          Immediate parent (1 step up)
+ancestor::	          Any ancestor (any level up)
+
+============================================================
+
+
+
+
+✅ findElement()
+
+Used to locate a single WebElement.
+
+Returns the first matching element found.
+
+If no matching element is found ➔ throws NoSuchElementException.
+
+✅ findElements()
+
+Used to locate multiple WebElements matching the locator.
+
+Returns a List of WebElements.
+
+If no matching elements are found ➔ returns an empty list, not null.
+
+
+==============================================================================
+
+WebDriver in Selenium is an interface that provides methods to interact with browsers, such as get(), click(), sendKeys(), etc.
+
+It is called an interface because:
+
+It defines a set of methods (blueprint) without implementation.
+
+Browser-specific classes like ChromeDriver, EdgeDriver, FirefoxDriver implement this interface, providing their own implementation for each method to work with the respective browser.
+
+
+
+=======================================================================================
+
+
+
+By ID
+
+css
+
+#id
+
+driver.findElement(By.cssSelector("#username"));
+
+=================================================================
+By Class
+
+.className
+
+driver.findElement(By.cssSelector(".login-button"));
+
+===========================================================
+By Tag and Class
+
+tag.className
+
+
+driver.findElement(By.cssSelector("button.submit"));
+
+======================================================================
+By Attribute
+
+tag[attribute='value']
+
+driver.findElement(By.cssSelector("input[type='text']"));
+
+=========================================================================
+Multiple attributes
+
+tag[attribute1='value1'][attribute2='value2']
+
+========================================================================
+Child selector
+
+
+div > span
+
+Descendant selector
+
+div span
+
+✔️ Key differences
+CSS Selector	                                           XPath
+=========================================================================================================================
+Cannot traverse upwards                                    Can traverse up using axes like parent::
+Faster in browsers	                                   Slightly slower
+Simpler syntax for class/id/attribute	                   More versatile for complex DOM
+
+
+
+
+ parent:: ➔ immediate parent
+✔️ ancestor:: ➔ any level parent
+✔️ child:: ➔ direct child
+✔️ descendant:: ➔ any level child
+✔️ following-sibling:: ➔ same level next siblings
+✔️ preceding-sibling:: ➔ same level previous siblings
+
+
+
+
+CSSSELECTORS:
+
+🔷 1. Tag Selector
+Selects all elements with a specific tag.
+
+✅ Example:
+button
+Selects all <button> elements.
+
+🔷 2. ID Selector
+Uses the # symbol to select an element by ID (unique).
+
+✅ Example:
+
+
+#login-button
+Selects element with id="login-button".
+
+🔷 3. Class Selector
+Uses the . symbol to select elements by class.
+
+✅ Example:
+
+.input-field
+Selects elements with class="input-field".
+
+🔷 4. Tag + Class Selector
+Selects an element with specific tag and class.
+
+✅ Example:
+
+button.submit
+Selects <button> with class submit.
+
+🔷 5. Attribute Selector
+Selects elements with a specific attribute value.
+
+✅ Example:
+
+input[type='text']
+Selects <input> elements with type="text".
+
+🔷 6. Partial Attribute Selector
+✔️ Starts with (^=)
+
+input[id^='user']
+Selects elements whose id starts with 'user', e.g., userName, userId.
+
+✔️ Ends with ($=)
+
+input[id$='name']
+Selects elements whose id ends with 'name', e.g., first_name, last_name.
+
+✔️ Contains (*=)
+
+
+input[id*='na']
+Selects elements whose id contains 'na', e.g., nameField, finalName.
+
+🔷 7. Multiple Classes
+Selects an element having both classes.
+
+✅ Example:
+
+div.class1.class2
+Selects <div> with both classes class1 and class2.
+
+🔷 8. Descendant Selector (space)
+Selects elements inside another element.
+
+✅ Example:
+
+
+div.container input
+Selects all <input> inside elements with class container.
+
+🔷 9. Child Selector (>)
+Selects immediate child elements.
+
+✅ Example:
+
+
+ul#menu > li	
+Selects direct <li> children of <ul id="menu">.
+
+🔷 10. Adjacent Sibling Selector (+)
+Selects an element immediately after another.
+
+✅ Example:
+
+
+label + input
+Selects <input> immediately after a <label>.
+
+🔷 11. General Sibling Selector (~)
+Selects all siblings after a specific element.
+
+✅ Example:
+
+
+label ~ input
+Selects all <input> siblings after a <label>.
+
+🔷 12. Universal Selector (*)
+Selects all elements.
+
+✅ Example:
+
+
+*
+Used rarely; selects every element.
+
+🔷 13. Negation Selector (:not)
+Selects all elements except the ones specified.
+
+✅ Example:
+
+input:not([type='submit'])
+Selects all input fields except submit buttons.
+
+🔷 14. nth-child Selector
+Selects specific child based on position.
+
+✅ Example:
+
+ul#menu > li:nth-child(2)
+Selects second <li> child under <ul id="menu">.
+
+🔷 15. nth-of-type Selector
+Selects specific element of its type among siblings.
+
+✅ Example:
+
+table tr:nth-of-type(3)
+Selects the third <tr> in a table.
+
+
+CSS Selectors cannot select elements by inner text (use XPath for text-based selection).
+
+
+EXAMPLE:
+========
+
+<button id="submit-btn" class="btn primary" type="submit">Submit</button>
+✔️ Selectors:
+
+By ID: #submit-btn
+
+By class: .btn or .primary
+
+By tag + class: button.primary
+
+By attribute: button[type='submit']
+
+Multiple classes: button.btn.primary
+
+
+
+
+==========================================================================
+
+
+types of explicitwaits
+
+
+✅ 1. Presence vs. Visibility vs. Clickable
+Condition	Method	Meaning
+Presence of element located	presenceOfElementLocated(By)	Element is in the DOM, visible or not.
+Visibility of element located	visibilityOfElementLocated(By)	Element is in the DOM and visible (width & height > 0).
+Element to be clickable	elementToBeClickable(By)	Element is visible and enabled for clicking.
+
+✅ 2. Invisibility / Absence
+Condition	Method	Meaning
+Invisibility of element located	invisibilityOfElementLocated(By)	Element is either not in DOM or not visible.
+Invisibility of element with text	invisibilityOfElementWithText(By, text)	Waits until element is not visible or text doesn’t match.
+
+✅ 3. Text or Attribute Conditions
+Condition	Method	Meaning
+Text to be present in element	textToBePresentInElement(By, text)	Waits for exact text in the element.
+Text to be present in element’s value attribute	textToBePresentInElementValue(By, text)	Useful for input fields.
+Attribute to be	attributeToBe(By, attribute, value)	Waits until attribute has the specified value.
+
+✅ 4. Alert Conditions
+Condition	Method	Meaning
+Alert is present	alertIsPresent()	Waits until an alert pops up.
+
+✅ 5. Frame and Window
+Condition	Method	Meaning
+Frame to be available and switch to it	frameToBeAvailableAndSwitchToIt(By)	Waits for frame and switches context.
+Number of windows to be	numberOfWindowsToBe(number)	Useful when new window/tab opens.
+
+✅ 6. Selection Conditions (checkbox / radio)
+Condition	Method	Meaning
+Element to be selected	elementToBeSelected(By)	Waits until element is selected.
+Element selection state to be	elementSelectionStateToBe(By, boolean)	Checks for selected/deselected state.
+
+✅ 7. Staleness
+Condition	Method	Meaning
+Staleness of element	stalenessOf(WebElement)	Waits until the element is no longer attached to the DOM (e.g. page refresh).
+
+=================================================================================
+
+
+EdgeDriver implements both WebDriver and JavascriptExecutor.
+then why not use driver directly ?
+
+
+ChatGPT said:
+Excellent follow-up. Let's clarify precisely why:
+
+✅ Your question:
+If EdgeDriver implements both WebDriver and JavascriptExecutor, why not use driver.executeScript() directly?
+
+🔷 Answer:
+✔️ Even though EdgeDriver implements JavascriptExecutor, your variable:
+
+WebDriver driver = new EdgeDriver();
+is declared as type WebDriver, and WebDriver interface does not declare executeScript().
+
+🔷 Think in terms of type safety (Java rules)
+Java treats the variable based on its declared type, not the object type.
+
+So here:
+
+
+driver.executeScript(); // ❌ Compile-time error
+because driver is WebDriver type, which doesn’t have this method.
+
+✅ How to access executeScript() then?
+✔️ Option 1: Cast to JavascriptExecutor
+
+
+JavascriptExecutor js = (JavascriptExecutor) driver;
+js.executeScript("alert('Hi');");
+✔️ Option 2: Declare as EdgeDriver type directly
+
+
+EdgeDriver driver = new EdgeDriver();
+driver.executeScript("alert('Hi');"); // ✅ works because EdgeDriver implements JavascriptExecutor
+But:
+
+In frameworks, you usually declare as WebDriver driver for flexibility to change browsers easily.
+
+🔷 Why do frameworks declare as WebDriver?
+✔️ Because you can later do:
+
+
+driver = new ChromeDriver();
+driver = new FirefoxDriver();
+without changing your code logic.
+
+
+Declaration type controls accessible methods.
+Even if the object implements multiple interfaces, your variable’s declared type decides what you can call.
+
+➡️ Therefore, when declared as WebDriver, you must cast to JavascriptExecutor to use executeScript().
+
+
+ In Java: Declared type vs Object type
+✔️ Declared type (compile-time type)
+
+The type you use in your variable declaration.
+
+Controls what methods you can call at compile time.
+
+✔️ Object type (runtime type)
+
+The actual class of the object created with new.
+
+Controls which implementation of a method runs at runtime.
+
+🔷 Example
+
+WebDriver driver = new EdgeDriver();
+Declared type: WebDriver
+
+Object type: EdgeDriver
+
+✔️ At compile time:
+You can call only methods declared in WebDriver interface.
+
+✔️ At runtime:
+If you call a method overridden in EdgeDriver, the EdgeDriver implementation runs.
+
+🔷 Why does it matter?
+Because:
+
+java
+Copy
+Edit
+driver.executeScript("alert('hi')"); // ❌ Compile error
+Even though the object is EdgeDriver (which implements JavascriptExecutor),
+the declared type is WebDriver, which has no executeScript() method.
+
+✅ Solution: Cast to the actual interface that has the method.
+
+
+((JavascriptExecutor) driver).executeScript("alert('hi')");
+
+Or
+
+
+JavascriptExecutor js = (JavascriptExecutor) driver;
+js.executeScript("alert('hi')");
+🔷 Key takeaway
+✔️ Compile-time method access is controlled by declared type.
+✔️ Runtime implementation is controlled by object type.
+
+Both are equally important but for different stages:
+
+Stage	              Controlled by
+--------------------------------------------------------
+Compile time	      Declared type
+Runtime	              Object type
+
+
+===========================================================================================================================================
+/ --single tag
+
+so /body/span only seects the direct child span after body not the nested child spans inside div or any other elements
+
+
+ChatGPT said:
+✅ Exactly correct.
+
+🔎 /body/span explanation:
+
+/ → start from root (<html> tag).
+
+body → go to body child of html.
+
+span → then select only direct span children of body.
+
+❌ It will NOT select:
+Any <span> inside other nested elements within <body> (e.g. inside <div>, <section>, etc.).
+
+✅ It WILL select:
+Only <span> elements that are immediately under <body> as direct children.
+
+
+
+<body>
+  <span>Hi</span>       <!-- selected -->
+  <div>
+    <span>Hello</span>  <!-- not selected -->
+  </div>
+</body>
+✔️ /body/span → selects only Hi, not Hello.
+
+Single / → direct child only.
+
+Double // → any level descendant.
+
+
+✔ Declaration = introducing the name/type
+✔ Definition = giving the actual implementation or allocating memory
+
+
+
+
+
+
+
+
+
+

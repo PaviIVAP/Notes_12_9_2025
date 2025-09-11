@@ -1,0 +1,245 @@
+
+dockerd---- (Docker Daemon)	Full-featured daemon that                handles CLI/API requests, image management, container orchestration, volumes, networks, etc.	Docker
+containerd----	Lightweight container runtime that handles pulling images, managing container lifecycle, and low-level execution	Docker (internally), Kubernetes
+
+
+
+
+Docker Daemon---	dockerd	The main Docker process that handles CLI/API requests, image pulls, container orchestration
+Container Runtime---	containerd (or runc)	The low-level engine that actually runs containers and manages their lifecycle
+
+
+
+
+
+Docker CLI
+You type a command like:
+
+bash
+docker run nginx
+This is the user interface—your way of telling Docker what to do.
+
+2. Docker API
+The CLI sends a REST request to the Docker API (usually at unix:///var/run/docker.sock)
+
+Example: POST /containers/create with JSON payload
+
+3. Docker Daemon (dockerd)
+The daemon receives the request and:
+
+Pulls the image if needed
+
+Creates the container
+
+Starts it
+
+Manages its lifecycle
+
+4. Container Runtime
+The daemon delegates actual container execution to a runtime like:
+
+runc (default)
+
+containerd (used by Kubernetes)
+
+This runtime sets up namespaces, cgroups, and launches the process
+
+5. Container Runs
+Your app (e.g., Nginx) is now running in an isolated environment
+
+
+
+Kubernetes skips dockerd entirely and talks directly to containerd via the Container Runtime Interface (CRI). That’s why modern Kubernetes setups don’t need Docker installed—they just need containerd.
+
+
+
+You run: docker run nginx
+
+↓ Docker CLI
+↓
+dockerd (Docker Daemon)
+↓
+containerd (Container Runtime)
+↓
+runc (Executes container process)
+↓
+Your container is running
+
+
+
+
+Service Type	External Access	         DNS Behavior	                         Use Case
+ClusterIP	❌ Internal only	 Single ClusterIP	                  Internal microservices
+NodePort	✅ Via NodeIP	         Single ClusterIP	                 Dev/test external access
+LoadBalancer	✅ Public IP	         Single ClusterIP	                 Production external access
+ExternalName	❌ Internal only	 DNS alias to external domain	         Call external APIs from cluster
+Headless	❌ Internal only	 DNS returns Pod IPs	                 Stateful apps, direct Pod access
+
+
+
+Questions/'A
+
+A headless service is defined by setting clusterIP: None. Instead of load-balancing traffic, it returns DNS records for each Pod IP behind the service. This enables clients to connect directly to specific Pods.
+
+
+Kubernetes ensures stable network identities for Pods managed by a StatefulSet by using a headless service, which provides DNS records for each Pod, allowing consistent access to individual Pods.
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------
+
+FULL FLOW:
+
+You apply a Deployment YAML
+1. kube-apiserver receives request
+2. Validates and stores in etcd
+3. Deployment controller creates ReplicaSet
+4. ReplicaSet creates Pods
+5. kube-scheduler assigns Pods to nodes
+6. kubelet on node pulls image and starts container via containerd
+7. kube-proxy sets up networking rules
+8. CoreDNS resolves service names
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------YMAL 
+=========
+diff btw selector.matchLabels|| template.metadata.labels
+
+selector.matchLabels
+This tells the Deployment controller:
+
+“Manage all Pods that have these labels
+
+template.metadata.labels
+This defines the labels that will be assigned to the Pods created by this Deployment.(the Deployment uses this to create new Pods.)
+
+
+===========================================================================================================================================
+Step 1: Declare the label you want to manage
+
+In selector.matchLabels, you're saying:
+
+Step 2: Assign that label to the Pods you’ll create
+
+In template.metadata.labels, you're saying:
+
+
+“These are my Pods—I created them, and I’ll manage them.”
+
+
+selector.matchLabels: You say, “I’ll manage anyone with the badge Team=QA.”
+
+template.metadata.labels: You give new hires the badge Team=QA.
+
+
+=========================================================================================================================================
+FLOW
+
+kubectl → API Server → Scheduler → Kubelet → Container Runtime → Container
+
+==========================================================================================================================================
+FOR POD
+
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx-pod
+  labels:
+    app: web
+spec:
+  containers:
+    - name: nginx-container
+      image: nginx:latest
+      ports:
+        - containerPort: 80
+
+
+=========================================================================================================================================
+
+
+podCreation 
+
+
+
+✅ Install Minikube
+If you're on Linux:
+
+
+curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64
+sudo install minikube-linux-amd64 /usr/local/bin/minikube
+
+===================================
+
+✅ Install kubectl
+
+curl -LO "https://dl.k8s.io/release/$(curl -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+chmod +x kubectl
+sudo mv kubectl /usr/local/bin/
+
+
+=======================================
+🚀 Step 2: Start Minikube
+
+minikube start
+This creates a single-node Kubernetes cluster locally.
+===========================================
+🔍 Step 3: Verify Setup
+Check that everything is running:
+
+
+kubectl version --client
+kubectl get nodes
+kubectl cluster-info
+You should see one node (minikube) and cluster endpoints.
+
+📄 Step 4: Create Pod YAML
+Create a file called nginx-pod.yaml:
+
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx-pod
+  labels:
+    app: web
+spec:
+  containers:
+    - name: nginx-container
+      image: nginx:latest
+      ports:
+        - containerPort: 80
+
+
+===================================
+📦 Step 5: Apply the Pod
+
+kubectl apply -f nginx-pod.yaml
+Check status:
+
+
+kubectl get pods
+kubectl describe pod nginx-pod
+
+
+
+=========================================
+🧪 Step 6: Test the Pod
+Exec into the container:
+
+
+kubectl exec -it nginx-pod -- bash
+Then inside the container:
+
+
+curl localhost
+You’ll see the Nginx welcome page HTML.
+
+
+=====================================================
+🧹 Step 7: Clean Up
+
+kubectl delete pod nginx-pod
+Would you like to expose this Pod using a Service next, or try deploying a custom image like a Java app? I can guide you through either!
+
+
+
+

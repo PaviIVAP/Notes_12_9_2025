@@ -1,0 +1,199 @@
+Jenkins
+
+Basics
+
+What is Jenkins and why do we use it?
+
+Jenkins is an open-source automation server used for continuous integration and continuous delivery (CI/CD). It automates building, testing, and deploying code.
+
+What is a Jenkins job?
+
+A Jenkins job is a task or a set of tasks configured in Jenkins, such as building or testing software.
+
+What’s the difference between Freestyle and Pipeline jobs?
+
+Freestyle: Created using the Jenkins UI, suited for simple tasks.
+
+Pipeline: Defined using a Jenkinsfile, supports complex workflows using code.
+
+How can you manually trigger a Jenkins job?
+
+By clicking the "Build Now" button in the Jenkins UI.
+
+What are build triggers in Jenkins?
+
+Build triggers automatically start jobs based on events (e.g., SCM changes, scheduled time).
+
+📝 Jenkinsfile / Pipeline
+
+What is a Jenkinsfile?
+
+A text file that contains the definition of a Jenkins pipeline and is stored in the source code repository.
+
+What are the two types of pipelines in Jenkins?
+
+Declarative Pipeline
+
+Scripted Pipeline
+
+What does the agent block do in a pipeline?
+
+Specifies where the pipeline or stage will run (e.g., any available agent or a specific label).
+
+Explain the difference between stages and steps in a Jenkinsfile.
+
+stages define major phases (e.g., Build, Test, Deploy).
+
+steps define actions inside each stage (e.g., run commands).
+
+What does bat 'javac HelloWorld.java' do in a Jenkinsfile?
+
+Runs the Windows batch command to compile HelloWorld.java.
+
+🔁 Advanced Pipelines
+
+What is a declarative pipeline vs scripted pipeline?
+
+Declarative: Simple, structured syntax (pipeline {} block).
+
+Scripted: Full control using Groovy scripting (node {} block).
+
+How do you pass parameters to a Jenkins pipeline?
+
+Use the parameters block inside the Jenkinsfile.
+
+What is a post block used for?
+
+Defines actions that run after the pipeline (e.g., always, success, failure).
+
+What is the use of when in a pipeline?
+
+Conditionally execute a stage based on environment, branch, etc.
+
+What is the use of input step in a pipeline?
+
+Pauses the pipeline and waits for manual approval.
+
+🧰 Multibranch & SCM
+
+What is a multibranch pipeline?
+
+Automatically creates jobs for each branch in a repo with a Jenkinsfile.
+
+How does Jenkins detect new branches in a multibranch pipeline?
+
+By scanning the repository using a timer or webhook.
+
+What plugin is commonly used to integrate GitHub with Jenkins?
+
+GitHub Integration Plugin or Git plugin.
+
+What is Webhook in GitHub and how does it relate to Jenkins?
+
+A webhook sends push notifications from GitHub to Jenkins to trigger jobs.
+
+🛠️ Build Tools & Execution
+
+What is the difference between sh and bat in Jenkins?
+
+sh: Used for Unix/Linux shell commands.
+
+bat: Used for Windows batch commands.
+
+Can Jenkins run jobs on multiple operating systems?
+
+Yes, using different build agents (Windows, Linux, etc.).
+
+How do you install Jenkins plugins?
+
+Manage Jenkins > Manage Plugins > Available tab > Install.
+
+What is a build agent? What is the purpose of a node?
+
+A build agent runs Jenkins jobs. A node is any machine configured to run jobs.
+
+How would you run a Java program in Jenkins?
+
+Use bat 'javac HelloWorld.java' and then bat 'java HelloWorld' inside a pipeline.
+
+⚙️ Real-world Concepts
+
+You have a repo with HelloWorld.java. Write a simple Jenkinsfile to compile and run it.
+
+pipeline {
+    agent any
+    stages {
+        stage('Build') {
+            steps {
+                bat 'javac HelloWorld.java'
+            }
+        }
+        stage('Run') {
+            steps {
+                bat 'java HelloWorld'
+            }
+        }
+    }
+}
+
+How can you send email notifications after a build?
+
+Configure Email Notification or Extended Email Plugin.
+
+Use a post block with emailext command.
+
+What are some common post-build actions?
+
+Send email, archive artifacts, trigger another job, deploy, etc.
+
+How would you use Jenkins to deploy a file to a remote server?
+
+Use SCP, FTP, or SFTP in a post block or custom stage with sh/bat.
+
+Example: sh 'scp file user@remote:/path'
+
+
+
+==============================================================================================================
+
+pipeline practice:
+
+
+
+pipeline{
+
+  agent any
+
+
+      parameters{
+            Boolean(name:'DEPLOY_TO_PROD', defaultValue:'true', description:'Deploy if the value is true'
+            
+}
+
+    stages{
+
+         stage('Greet'){
+            steps{
+               echo "Hello, Jenkins!"
+}
+             }
+           stage('Build'){
+               echo "Compiling source code..."
+             }
+          stage('Deploy'){
+            script{
+              if(params.DEPLOY_TO_PROD){
+
+             echo "Deploy to production"
+
+}else{
+
+echo "Skipping deployment"
+}
+
+}
+
+
+}
+  }                       
+}

@@ -1,0 +1,1042 @@
+tn10az7780
+
+
+
+--------
+_______*_______
+______***______
+_____*****_____
+
+
+
+ const store =document.querySelector("#button1")
+ store.innerText="Buy 10 health (10 gold)";
+-------------------------------------------------------------------------------------------------------
+ Animal animal = new Dog();  // Reference type is Animal, object type is Dog
+        animal.makeSound();  // Calls Dog's overridden method: "Bark"
+        
+        // animal.fetch();  // Error! fetch() is not in Animal
+
+        // To call fetch(), you must cast it back to Dog:
+        Dog dog = (Dog) animal;  // Type-casting
+        dog.fetch();  // This works: "Dog fetches the ball"
+
+
+
+Compile-Time and Run-Time Behavior:
+-----------------------------------------------------------------------------------------------
+all this is for  Animal animal = new Dog();
+-----------------------------------------------------------------------------------------------
+At compile-time, the reference type (Animal) is checked,
+ so only methods in Animal can be called.
+At run-time, the actual object (Dog) determines which
+ method implementation is called (i.e., Dog’s makeSound() is executed, not Animal’s).
+
+Why Does This Happen?
+Java’s type system is designed to ensure compile-time safety. 
+The compiler only allows you to call methods that are guaranteed to be available in the reference type. This prevents errors where you try to call methods that don’t exist for certain types.
+
+
+Dynamic method dispatch (method overriding): Even though the reference is of the superclass type (Animal), the method calls are resolved at runtime based on the actual object type (e.g., Dog). If the subclass (Dog) overrides methods from the superclass (Animal), the subclass's version of the method will be called. This allows flexibility in how objects behave depending on their specific subclass implementation.
+
+
+need to wtudy final default satic in interface and abstract
+
+
+it is confusing point 1: by using Animal animal reference to dog class we can use animal methods too along with dog methods
+point2: : by using Animal animal reference we can call any of its subclass without creating Dog dog = new Dog() or Cat() each time 
+this is mh overalll understanding
+
+Usage: When you use Animal animal = new Dog();,
+the reference type (Animal) ensures that you can call methods that are available in the Animal class,
+but the actual implementation executed will be based on the subclass (Dog).
+
+Benefit: This way, you can write code that works with different types of animals (Dog, Cat, etc.),
+but you don't need to rewrite code for every specific subclass.
+Yes, exactly! You can only use Animal animal = new Dog(); if the subclass (Dog) extends the superclass (Animal).
+This is because the subclass inherits the properties and behaviors (methods) of the superclass, which enables polymorphism.
+
+Reference Type: The methods you can call on an object are determined by the type of the reference, not the type of the object. 
+In the case of Animal animal = new Dog();, the reference type is Animal, so only methods available in Animal can be called, even though the actual object is of type Dog.
+
+Object Type: The actual object (new Dog()) determines which implementation of the methods will be executed. So, even though the reference type is Animal, the Dog version of any overridden methods (like makeSound()) will be executed due to runtime polymorphism.
+
+The reference type determines what methods are visible at compile time.
+Even though the object is a Dog, the reference type (Animal) only gives you access to Animal's methods.
+To access Dog-specific methods, you need to cast the reference to Dog.
+
+
+runtime-polymorphism:
+
+Method overriding is the backbone of runtime polymorphism. The Dog and Cat classes override the sound() method of the Animal class.
+The actual method called is determined at runtime based on the actual object type, even though the reference is of type Animal.
+
+
+
+
+
+At run-time, the actual object (Dog) determines which
+ method implementation is called (i.e., Dog’s makeSound() is executed, not Animal’s). so then why cnno we call subclass ethod if it can check the subclass object at runtime 
+ChatGPT said:
+ChatGPT
+The reason you cannot directly call subclass-specific methods (e.g., methods unique to Dog) through a superclass reference (e.g., Animal) is due to compile-time type checking. Even though at runtime, the actual object type (Dog) is known, Java ensures that method calls are checked at compile time to ensure type safety and consistency. At compile-time, the compiler only knows that the reference is of type Animal, so it will restrict you to calling only methods defined in the Animal class.
+
+However, method overriding works because the overridden methods in the subclass (Dog or Cat) match the method signatures in the superclass (Animal). When a method is overridden, the decision on which method to invoke is delayed until runtime, and based on the actual object type, the correct method (from the subclass) is called.
+
+Why can’t subclass-specific methods be called from a superclass reference?
+Compile-time safety: The compiler can only check and allow methods that exist in the declared type of the reference, which is Animal. If you try to call a method that exists only in Dog (e.g., bark()), the compiler cannot guarantee that this method will exist in all Animal objects, so it will not allow it.
+
+Example:
+
+java
+Copy code
+Animal animal = new Dog();
+animal.bark();  // Compile-time error: bark() is not defined in Animal
+Polymorphism only works with overridden methods: When the method exists in both the superclass (Animal) and the subclass (Dog), polymorphism allows the runtime system to call the subclass version of the method (e.g., Dog's makeSound()). But for methods that don’t exist in the superclass, there's no mechanism for dynamic resolution at runtime.
+
+How to access subclass-specific methods:
+If you are certain that the object is of a particular subclass type (e.g., Dog), you can use typecasting to access subclass-specific methods:
+
+java
+Copy code
+Animal animal = new Dog();
+((Dog) animal).bark();  // Now you can call the bark() method
+This typecasting essentially tells the compiler that you are sure the object referred to by animal is of type Dog, allowing you to call Dog-specific methods like bark().
+
+Summary:
+The compiler restricts method calls based on the reference type (Animal in this case) to ensure type safety.
+Polymorphism at runtime only works for methods that exist in both the superclass and subclass (overriding).
+Subclass-specific methods can be accessed using typecasting if you're certain of the object type.
+
+
+IMPORTANT:
+The reason you cannot directly call subclass-specific methods (e.g., methods unique to Dog) through a superclass reference (e.g., Animal)
+is due to compile-time type checking. Even though at runtime, the actual object type (Dog) is known, Java ensures that method calls are checked at 
+compile time to ensure type safety and consistency. At compile-time, the compiler only knows that the reference is of type Animal, so it will restrict you to calling only methods defined in the Animal class.
+
+However, method overriding works because the overridden methods in the subclass (Dog or Cat) match the method signatures in the superclass (Animal).
+When a method is overridden, the decision on which method to invoke is delayed until runtime, and based on the actual object type,
+the correct method (from the subclass) is called.
+
+
+
+
+Yes, I understand why this can feel confusing! Let me break it down a bit more to help clarify:
+
+Key Concept: Reference Type vs Object Type
+Reference Type: This is the type of the reference (the variable that holds the object). In your example:
+
+java
+Copy code
+Animal animal = new Dog();
+The reference type here is Animal.
+The reference type decides what methods you can call on the object.
+Object Type: This is the actual object in memory that the reference points to. In your case:
+
+The object type is Dog because you're creating a Dog object.
+--------------------------------------important---------------------------------------------------------------------------------------------
+
+The reference type (Animal in this case) restricts what methods you can call.
+Since animal is an Animal reference, you can only call methods that exist in the Animal class.
+Even though the object is a Dog, you're limited by what the Animal reference can "see" (i.e., Animal's methods).
+
+The object type (Dog) determines which version of the methods is actually executed.
+
+
+------------------------------------------
+
+
+The example JavascriptExecutor js = (JavascriptExecutor) driver; demonstrates downcasting in Java.
+
+Here’s how this example works:
+
+1. What is happening in the code:
+driver: The driver is a reference to an object of a class (such as ChromeDriver, FirefoxDriver, etc.) that implements multiple interfaces, one of which is JavascriptExecutor.
+Downcasting: You are casting the driver object from its declared type (WebDriver) to JavascriptExecutor. This is possible because the underlying object (e.g., ChromeDriver) implements both WebDriver and JavascriptExecutor.
+2. Why is casting necessary:
+driver is usually declared as type WebDriver, which does not have executeScript() method because it belongs to JavascriptExecutor.
+By casting driver to JavascriptExecutor, you can call methods specific to JavascriptExecutor, like executeScript().
+3. Code Example:
+java
+Copy code
+// WebDriver is the base interface
+WebDriver driver = new ChromeDriver();  
+
+// Downcasting WebDriver to JavascriptExecutor
+JavascriptExecutor js = (JavascriptExecutor) driver;
+
+// Now, you can use JavascriptExecutor-specific methods
+js.executeScript("alert('Hello World!');");
+4. Explanation of Key Points:
+WebDriver driver = new ChromeDriver();: driver is declared as type WebDriver, which is the parent interface. The actual object is ChromeDriver, which also implements JavascriptExecutor.
+(JavascriptExecutor) driver;: This is downcasting, where we cast the driver reference from WebDriver to JavascriptExecutor to access its methods.
+js.executeScript(): After downcasting, you can call the executeScript() method to run JavaScript within the browser.
+5. Interface casting:
+This is similar to casting between interfaces. In this case:
+
+WebDriver is one interface.
+JavascriptExecutor is another interface implemented by the ChromeDriver (or any other browser-specific driver).
+By casting to JavascriptExecutor, you tell the Java compiler that the object stored in the driver reference supports the methods of JavascriptExecutor.
+
+When casting fails:
+If the driver object does not implement JavascriptExecutor, a ClassCastException will occur at runtime:
+
+java
+Copy code
+// Suppose driver is of a class that doesn't implement JavascriptExecutor
+WebDriver driver = new SomeDriverThatDoesNotSupportJS();
+JavascriptExecutor js = (JavascriptExecutor) driver; // This will throw
+
+
+------------------------------------------------
+
+In both scenarios, whether you're using ChromeDriver driver = new ChromeDriver(); or WebDriver driver = new ChromeDriver();, the casting to JavascriptExecutor works because the underlying object is still of type ChromeDriver, and ChromeDriver implements both WebDriver and JavascriptExecutor.
+
+Breakdown of the Two Scenarios:
+Scenario 1:
+
+java
+Copy code
+ChromeDriver driver = new ChromeDriver(); // driver reference points to ChromeDriver object
+
+JavascriptExecutor js = (JavascriptExecutor) driver; // This works
+In this case, the driver reference is of type ChromeDriver, which already directly knows about both WebDriver and JavascriptExecutor.
+No cast is technically needed here because ChromeDriver already implements JavascriptExecutor. You could just do:
+java
+Copy code
+driver.executeScript("alert('Hello');");
+But casting still works because you're treating it as JavascriptExecutor.
+Scenario 2:
+
+java
+Copy code
+WebDriver driver = new ChromeDriver(); // driver reference points to ChromeDriver object
+
+JavascriptExecutor js = (JavascriptExecutor) driver; // This works too
+Here, the driver reference is of type WebDriver, which doesn't directly expose the methods from JavascriptExecutor.
+Since the actual object is still ChromeDriver, which implements JavascriptExecutor, the cast allows you to access the methods of JavascriptExecutor.
+After casting, you can use:
+java
+Copy code
+js.executeScript("alert('Hello');");
+Key Difference:
+Without Casting:
+If driver is of type ChromeDriver, you can directly use both WebDriver and JavascriptExecutor methods without casting.
+If driver is of type WebDriver, you can only use WebDriver methods. To use JavascriptExecutor methods, you need to cast it.
+
+Why Casting is Needed in the Second Case:
+WebDriver reference: When driver is declared as WebDriver, the compiler only knows about WebDriver methods. Even though the actual object is ChromeDriver,
+which implements JavascriptExecutor, the compiler doesn't allow access to JavascriptExecutor methods unless you cast.
+
+
+-----------------------------------------------
+Key Points:
+Reference Type Determines Access:
+
+The type declared on the left side (e.g., WebDriver driver) limits the methods you can call on that reference. You can only call methods that are defined in the WebDriver interface.
+For example:
+java
+Copy code
+WebDriver driver = new ChromeDriver(); // driver can only access WebDriver methods
+driver.get("http://example.com"); // This is valid
+driver.executeScript("alert('Hello'); // This will cause a compilation error
+Actual Object Type:
+
+The actual object type (e.g., ChromeDriver) contains all the methods from both WebDriver and any additional interfaces
+it implements (like JavascriptExecutor).
+However, without casting, the compiler treats the reference as the type on the left side, which is WebDriver.
+Casting to Access Additional Methods:
+
+To access methods from an interface or class that is not part of the declared reference type, you must cast the reference to the appropriate type.
+For example:
+java
+Copy code
+JavascriptExecutor js = (JavascriptExecutor) driver; // Casting allows access to JavascriptExecutor methods
+js.executeScript("alert('Hello'); // This works
+Runtime Type Safety:
+
+The cast works at runtime, where Java checks the actual object type. If the object does not implement the interface you're trying to cast to,
+ a ClassCastException will be thrown.
+
+-------------------------------------------------------------------------
+
+Understand Reference vs. Actual Object:
+-----------------------------------------IMPORTANT
+Reference Type: The type of the reference (left-hand side) determines which methods are available at compile-time.
+Actual Object Type: The actual object (right-hand side) determines what the object can do at runtime.
+Example:
+java
+Copy code
+WebDriver driver = new ChromeDriver(); // Reference type: WebDriver, Actual type: ChromeDriver
+// Can only call WebDriver methods unless casted
+
+
+
+
+
+Selenium concepts 
+
+WebDriver (interface)
+
+ChromeDriver (concrete class that inherits from RemoteWebDriver)
+RemoteWebDriver (abstract class implementing WebDriver)
+
+Implements methods like findElement().
+WebElement (interface)
+
+RemoteWebElement (concrete class implementing WebElement)
+
+webdriver driver = chromedriver
+driver.findelement(by.xpath()).click()
+driver=is just an reference type for webdriver but implements the chromedriver class
+findelement=is an method inherited from webdriver which is iplemented by remotewebdriverclass  
+findelement returns webelement interface which internally impllemented by remotewebelement class
+click=comes from webelemnt class
+
+chromedriver class inherits from remotewbdriver class so findelemnt come sfrom remotewbdriver 
+
+
+driver is a reference type for WebDriver, pointing to an instance of the ChromeDriver class.
+findElement is a method from the WebDriver interface implemented in the RemoteWebDriver class.
+findElement returns an object of the WebElement interface, internally implemented by the RemoteWebElement class.
+click() comes from the WebElement interface.
+
+
+
+so before casting the first object should have implemented the interface or class of the assigning 
+ChatGPT said:
+ChatGPT
+Yes, exactly! Before casting, the object’s actual class (at runtime) must implement the interface or extend the class you are casting it to. This ensures compatibility and that the object has the methods or behaviors expected by the interface or class you're casting to.
+
+================================================================================================================================================================================================================================================================================================
+
+
+TESTNG
+
+beforemethod aftermethod---will execute each times for each test in a testng class
+beforeclass afterclass--will execute only once before and after test inside for one class
+beforetest aftertest--will execute once for each tests in xml level if there are 2 testes then it will execute each time for the 2 testes
+beforesuite aftersuite---will execute once before the whole test
+ChatGPT said:
+ChatGPT
+Your understanding is almost entirely correct, with just a slight clarification for BeforeTest and AfterTest. Here’s the breakdown:
+
+@BeforeMethod / @AfterMethod: These will execute before and after each test method in a TestNG class. So, if you have three test methods in a single class, @BeforeMethod and @AfterMethod will run three times, once for each test method.
+
+@BeforeClass / @AfterClass: These will execute once before and once after all the test methods in a single class. So, if you have multiple test methods in a class, @BeforeClass runs once before any of them, and @AfterClass runs once after all of them.
+
+@BeforeTest / @AfterTest: These will execute once for each <test> tag in the testng.xml file. If you define two <test> tags in the XML, @BeforeTest and @AfterTest will run once for each of these tags.
+
+@BeforeSuite / @AfterSuite: These will execute once before and once after the entire suite—meaning once for everything that’s part of the suite in the XML file.
+
+So your summary is almost correct; just remember that @BeforeTest / @AfterTest are linked to each <test> tag in the testng.xml file, not individual test classes or methods.
+
+
+
+
+JAVA
+Converting datatypes
+-------------------------------------------------
+String.valueOf and Integer.toString are standard methods for converting int to String.
+Concatenation with "" is a quick, readable way to achieve the same.
+
+String to int
+Integer.parseInt returns an int primitive.
+Integer.valueOf returns an Integer object.
+
+
+
+hile autoboxing simplifies code, it can have performance overhead because the wrapper class objects are created for each primitive value. 
+For example, every time a primitive int is added to a collection like ArrayList, it will be boxed into an Integer,
+ which could cause additional memory usage. However, Java caches certain small values (e.g., Integer values between -128 and 127), which can mitigate this overhead to some extent.
+
+
+
+
+
+Selenium
+------------------------------------------------------
+
+Exception handling wioth time stamp and screeshot
+try {
+    driver.findElement(By.id("someElement")).click();
+} catch (NoSuchElementException e) {
+    File screenshot = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
+    String timestamp = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
+    Files.copy(screenshot.toPath(), Paths.get("screenshots/error_" + timestamp + ".png"));
+}
+
+
+
+Casting
+--------------------------------------------------------------- 
+
+URLConnection urlConnection = new URL(url).openConnection();
+
+breaking down the parts
+so we need openconnection which coes from URL but the openconnection returns httpsurlconnection so we need to cast
+
+
+URL url = new URL("http://example.com");---------------this is the not connected with URLConnection but has openconnection method
+URLConnection urlConnection = url.openConnection();----------URLConnection is seperate superclass for connection objects,openconnection which returns URLConnection
+HttpURLConnection httpConnection = (HttpURLConnection) urlConnection;--------now the url passed is HTTP so the URLConnection returns a http like object so we need to cast it to HTTPURLcConnection class
+  
+The openConnection() method comes from the URL class, and it returns a general connection object of type URLConnection
+This object could represent any connection type (HTTP, FTP, etc.), so it doesn't know upfront whether the connection is specifically an HTTP connection.
+----------------------------------------------------------------------
+Why we need to cast to HttpURLConnection:
+The returned URLConnection is a general type that doesn't have all the specific HTTP features we need.
+ If you want to access HTTP-specific methods like setRequestMethod(), you need to cast the URLConnection object to HttpURLConnection.
+
+
+
+Without casting, the object returned by openConnection() is a URLConnection, which doesn't have HTTP-specific methods like setRequestMethod().
+If you try to call setRequestMethod() directly on a URLConnection object, you'll get a compile-time error.
+
+
+
+URL is not the direct superclass of URLConnection.
+URLConnection is an independent class that handles communication with various protocols.
+The openConnection() method in the URL class returns an instance of URLConnection (or one of its subclasses), such as HttpURLConnection for HTTP URLs.
+
+URL is the class that represents the URL structure and it has the openConnection() method.
+URLConnection is the class used to manage the connection once the URL is parsed.
+HttpURLConnection is a subclass of URLConnection that provides specific methods for handling HTTP requests.
+
+
+url is a URL object.
+The openConnection() method is called on the URL object, and it returns a URLConnection object.
+If the URL is HTTP-based, the returned object will specifically be an instance of HttpURLConnection, which extends URLConnection.
+This is why we often cast the URLConnection to HttpURLConnection for HTTP-specific methods.
+
+	
+
+URL knows how to create a connection but doesn't handle it directly.
+URLConnection is a generic type for any connection.
+If the connection is HTTP-based, you cast to HttpURLConnection to unlock HTTP-related methods.
+
+
+
+
+Your understanding is correct! Here's a refined explanation to reinforce it:
+
+1. URL Object Initialization:
+---------------------------------------------------------
+URL url = new URL("http://example.com");
+The URL object represents a URL (Uniform Resource Locator).
+It is not directly connected to URLConnection, but it provides the openConnection() method to initiate a connection.
+
+
+2. Opening a Connection:
+----------------------------------------------------------
+URLConnection urlConnection = url.openConnection();
+The openConnection() method of the URL class returns a URLConnection object.
+URLConnection is a separate superclass designed for general connections, regardless of protocol (HTTP, FTP, etc.).
+At this stage, the returned object is still of type URLConnection and doesn't provide protocol-specific methods (like HTTP methods).
+
+
+3. Casting to HttpURLConnection:
+------------------------------------------------------------
+HttpURLConnection httpConnection = (HttpURLConnection) urlConnection;
+When the URL uses the HTTP protocol (http:// or https://), the urlConnection object returned by openConnection() is actually an instance of HttpURLConnection.
+Since URLConnection is a general type, you need to explicitly cast it to HttpURLConnection to use HTTP-specific methods like setRequestMethod(), getResponseCode(), etc.
+
+
+
+
+COllections:
+--------------------------------------------------------------------------------
+Common Methods in Set:
+add(E e): Adds an element to the set.
+remove(Object o): Removes the specified element.
+contains(Object o): Checks if the set contains a specific element.
+size(): Returns the number of elements in the set.
+isEmpty(): Checks if the set is empty.
+clear(): Removes all elements from the set.
+iterator(): Returns an iterator to traverse the elements
+
+
+Common Methods in Map:
+put(K key, V value): Adds or updates a key-value pair.
+get(Object key): Retrieves the value associated with a given key.
+remove(Object key): Removes the key-value pair for the specified key.
+containsKey(Object key): Checks if the map contains a specific key.
+containsValue(Object value): Checks if the map contains a specific value.
+size(): Returns the number of key-value pairs.
+isEmpty(): Checks if the map is empty.
+clear(): Removes all key-value pairs.
+keySet(): Returns a Set of all keys.
+values(): Returns a Collection of all values.
+entrySet(): Returns a Set of all key-value pairs.
+
+
+
+
+ A List is an ordered collection
+
+Duplicates Allowed: A List can contain duplicate elements.
+Ordering: Elements in a List are ordered, meaning the order in which you add elements is preserved.
+Indexed: Elements can be accessed by their index (0-based).
+Implementation Examples:
+ArrayList
+LinkedList
+Vector
+
+Methods (Common):
+
+add(E e)
+get(int index)
+remove(int index)
+set(int index, E element)
+size()
+contains(Object o)
+
+Set unordered
+
+No Duplicates: A Set does not allow duplicate elements
+No Indexing: Elements in a Set do not have indexes, and their order is not guaranteed (unless using a specific implementation like LinkedHashSet or TreeSet).
+Implementation Examples:
+HashSet (does not guarantee order)
+LinkedHashSet (maintains insertion order)
+TreeSet (stores elements in a sorted order)
+
+Methods (Common):
+
+add(E e)
+remove(Object o)
+contains(Object o)
+size()
+isEmpty()
+
+
+A Map is a collection that stores key-value pairs. Each key is unique, and each key maps to exactly one value.
+
+Key Features:
+Key-Value Pairs: A Map stores data in key-value pairs, where each key is unique.
+No Duplicate Keys: A Map does not allow duplicate keys, but it can allow duplicate values.
+No Indexing: The elements are not ordered by index; they are ordered by keys (in some implementations like TreeMap).
+Implementation Examples:
+HashMap (no ordering)
+LinkedHashMap (maintains insertion order)
+TreeMap (keys are sorted)
+
+Methods (Common):
+
+put(K key, V value)
+get(Object key)
+remove(Object key)
+containsKey(Object key)
+containsValue(Object value)
+size()
+keySet() (returns Set of keys)
+values() (returns Collection of values)
+
+
+===================================================================================================================
+EXTRAS
+
+
+String str = "Hello"; creates a String object containing the value "Hello".
+str is a reference to this String object.
+The String class defines the structure and behavior of the String object, and you can call various methods on str because it is an object of the String class.
+
+
+
+
+You can call any method declared in Animal. but if the dog class has the same method it will override
+
+
+
+What super Means
+=========================
+super refers to the immediate parent class of the current class. You use it to:
+
+Call a superclass method (especially when it's overridden)
+
+Access superclass constructors
+
+Refer to superclass fields (if shadowed)
+
+🧪 Examples of super in Action
+1. Calling a superclass method:
+java
+class Parent {
+    void greet() {
+        System.out.println("Hello from Parent");
+    }
+}
+
+class Child extends Parent {
+    @Override
+    void greet() {
+        System.out.println("Hello from Child");
+        super.greet(); // Calls Parent's greet()
+    }
+}
+===========================================================================
+2. Calling a superclass constructor:
+java
+class Parent {
+    Parent(String name) {
+        System.out.println("Parent constructor: " + name);
+    }
+}
+
+class Child extends Parent {
+    Child() {
+        super("Pavitha"); // Calls Parent constructor
+        System.out.println("Child constructor");
+    }
+}
+=======================================================================================	
+3. Accessing a shadowed field:
+java
+class Parent {
+    int value = 10;
+}
+
+class Child extends Parent {
+    int value = 20;
+
+    void showValues() {
+        System.out.println("Child value: " + value);
+        System.out.println("Parent value: " + super.value);
+    }
+}
+
+====================================================================================================================
+
+
+
+
+🔹 1. List — Ordered, allows duplicates'
+
+Type	      Ordered	Duplicates   Access by Index	Notes
+--------------------------------------------------------------------------------------------
+ArrayList	✅	✅	       ✅	        Fast access, slow insert/delete in middle
+LinkedList	✅	✅	       ✅	        Fast insert/delete, slower access
+
+
+🔹 2. Set — Unordered or ordered, no duplicates
+
+Type	      Ordered	Sorted	Duplicates	Notes
+--------------------------------------------------------------------------------------
+HashSet	        ❌	❌	❌	        Fast lookup, no order
+LinkedHashSet	✅	❌	❌	        Maintains insertion order
+TreeSet	        ✅	✅	❌	        Automatically sorted
+
+
+🔹 3. Map — Key-value pairs, unique keys
+
+Type	        Ordered	Sorted	Duplicate Keys	Notes
+--------------------------------------------------------------------------------------
+HashMap	        ❌	❌	❌	        Fast access, no order
+LinkedHashMap	✅	❌	❌	        Maintains insertion order
+TreeMap	        ✅	✅	❌	        Sorted by key
+
+
+🔹 4. Queue — FIFO structure
+
+Type	        FIFO	LIFO	Notes
+------------------------------------------------------------------------------------------
+LinkedList	✅	✅	Can act as both queue and stack
+PriorityQueue	✅	❌	Orders by priority, not insertion
+ArrayDeque	✅	✅	Double-ended queue (add/remove both ends)
+
+
+🔹 5. Stack — LIFO structure
+
+Type	LIFO	Notes
+----------------------------------------------------------------------------------------------
+Stack	✅	Legacy class, use Deque for modern stack behavior
+
+
+
+
+
+
+
+Add Elements
+-------------------------
+list.add("item");
+set.add("item");
+map.put("key", "value");
+queue.offer("task");
+stack.push("task");
+
+
+
+Access Elements
+--------------------------------
+list.get(0);
+map.get("key");
+queue.peek();
+stack.peek();
+
+
+Remove Elements
+--------------------------------------
+list.remove("item");
+set.remove("item");
+map.remove("key");
+queue.poll();
+stack.pop();
+
+
+============================================================================================================================
+
+HTTP URL CONNECTION EXPLANATION
+
+
+
+Step 1: Create a URL object
+--------------------------------------------------------------------------------------------------------------
+URL obj = new URL(url);
+Purpose: Converts the String url into a URL object.
+
+Why: You need a URL object to open a connection to that address.
+
+Example: If url = "https://demoqa.com", this creates a structured object representing that web address.
+
+
+
+
+
+
+🔹 Step 2: Open a generic connection
+--------------------------------------------------------------------------------------------------------------------------
+URLConnection genericConnection = obj.openConnection();
+Purpose: Opens a connection to the URL.
+
+Return type: URLConnection (a generic superclass for all types of connections—HTTP, FTP, etc.)
+
+Limitation: You can’t use HTTP-specific methods like setRequestMethod() unless you cast it.
+
+
+
+
+
+
+🔹 Step 3: Downcast to HttpURLConnection
+-----------------------------------------------------------------------------------------------------------------
+HttpURLConnection connection = (HttpURLConnection) genericConnection;
+Purpose: Converts the generic connection into an HTTP-specific one.
+
+Why: HttpURLConnection gives you access to methods like:
+
+setRequestMethod("HEAD")
+
+getResponseCode()
+
+setRequestProperty(...)
+
+
+======================================================================================================
+✅ Final Combined Version
+
+URL obj = new URL(url);
+URLConnection genericConnection = obj.openConnection();
+HttpURLConnection connection = (HttpURLConnection) genericConnection;
+
+This is functionally identical to the one-liner:
+
+
+HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
+
+
+---------------------------------------------------------------------------------------------------
+JVA COLLECTIONS
+======================
+
+Source List	Original Behavior	After Wrapping with new ArrayList<>(...)
+--------------------------------------------------------------------------------------
+List.of(...)	        Immutable	✅ Fully mutable copy
+Arrays.asList(...)	Fixed-size	✅ Fully mutable copy
+
+
+
+without new memory
+=================================================================
+List<Integer> a = List.of(1, 2, 3);
+a.set(0, 99);     // ❌ Exception
+a.add(4);         // ❌ Exception
+
+List<Integer> b = Arrays.asList(1, 2, 3);
+b.set(0, 99);     // ✅ Works
+b.add(4);         // ❌ Exception
+
+
+with new memeory
+===============================================================
+
+List<Integer> c = new ArrayList<>(List.of(1, 2, 3));
+c.add(4);         // ✅ Works
+
+List<Integer> d = new ArrayList<>(Arrays.asList(1, 2, 3));
+d.add(4);         // ✅ Works
+
+
+Use List.of(...) when you want a clean, immutable list with no nulls — great for constants or config.
+
+Use Arrays.asList(...) when you're working with existing arrays or want to allow null values.
+
+Wrap either in new ArrayList<>(...) when you need full mutability.'
+
+
+
+
+listof=======it takes fresh values (like 1, 2, 3) and creates a new immutable list    
+  Here are my values — build me a locked list.Here are my values. Build me a list I can’t touch.”
+
+aslist=======It wraps an existing array or varargs into a fixed-size list.            
+  Here’s my array — give me a list view of it.” Here’s my array. Let me treat it like a list — but don’t mess with the size
+
+
+
+
+
+List<List<Integer>> matrix = new ArrayList<>();
+
+matrix.add(List.of(1, 2, 3));  // Row 0
+matrix.add(List.of(4, 5, 6));  // Row 1
+matrix.add(List.of(7, 8, 9));  // Row 2
+
+[
+  [1, 2, 3],
+  [4, 5, 6],
+  [7, 8, 9]
+]
+
+
+
+List<List<Integer>> b = new ArrayList<>(List.of(nums));
+b = [
+  [1, 2, 3]  // one element, which is itself a List<Integer>
+]
+Because List.of(nums) wraps nums inside another list. You're not flattening or copying the contents of nums—you're nesting it.
+
+So b.get(0) returns nums, and b.get(0).get(1) returns 2.
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+SET core set-theory operations
+==============================
+
+1.Union — Combine all elements from both sets (no duplicates)
+
+Set<Integer> a = new HashSet<>(Arrays.asList(1, 2, 3));
+Set<Integer> b = new HashSet<>(Arrays.asList(3, 4, 5));
+
+Set<Integer> union = new HashSet<>(a);
+union.addAll(b); // union = [1, 2, 3, 4, 5]
+
+2. Intersection — Keep only elements common to both sets
+java
+Set<Integer> intersection = new HashSet<>(a);
+intersection.retainAll(b); // intersection = [3]
+
+
+
+3. Difference — Elements in a that are not in b
+
+Set<Integer> difference = new HashSet<>(a);
+difference.removeAll(b); // difference = [1, 2]
+🔍 Real-World Use Case
+Imagine you're comparing two test result sets:
+
+Set<String> passed = ["Alice", "Bob", "Charlie"]
+
+Set<String> re
+
+
+====================================================================================================================================
+
+If you already have a Set and just want to assign it to another reference, you don’t need new. You simply point the new variable to the existing object:
+
+Set<Integer> original = new HashSet<>(Arrays.asList(1, 2, 3));
+Set<Integer> alias = original; // No 'new' here
+
+Now both original and alias refer to the same object in memory. Any changes made through one reference will reflect in the other:
+alias.add(4);
+System.out.println(original); // Output: [1, 2, 3, 4]
+
+
+
+If you want to copy the contents but not share the reference, then you do need new:
+Set<Integer> copy = new HashSet<>(original); // Creates a new Set with same elements
+Now copy is independent — changes to it won’t affect original.
+=============================================================================================================================================
+TO CHECK NO OF OCCURANCES USING MAP
+freqMap.put(item, freqMap.getOrDefault(item, 0) + 1);
+Let’s say we’re processing "apple":
+
+Check if "apple" is already in the map:
+
+freqMap.getOrDefault("apple", 0)
+
+If "apple" is already there, it returns the current count (say, 1).
+
+If not, it returns 0.
+
+Add 1 to that count:
+
+So 1 + 1 = 2
+
+Update the map:
+
+freqMap.put("apple", 2)
+
+Now "apple" has a count of 2.
+
+🧪 Step-by-Step Simulation:
+Let’s simulate the loop manually:
+
+
+Map<String, Integer> freqMap = new HashMap<>();
+
+// First item: "apple"
+freqMap.getOrDefault("apple", 0) → 0  
+→ put("apple", 0 + 1) → freqMap = { "apple" = 1 }
+
+// Second item: "banana"
+freqMap.getOrDefault("banana", 0) → 0  
+→ put("banana", 0 + 1) → freqMap = { "apple" = 1, "banana" = 1 }
+
+// Third item: "apple"
+freqMap.getOrDefault("apple", 0) → 1  
+→ put("apple", 1 + 1) → freqMap = { "apple" = 2, "banana" = 1 }
+
+
+
+
+===========================================================================================================================================
+
+LinkedHashMap<String, Integer> accessOrderedMap = new LinkedHashMap<>(16, 0.75f, true);
+
+==================================================================================================================================================
+
+WHICH TO USE WHEN
+
+✅ List Implementations
+ArrayList – Maintains insertion order. Backed by an array, so it offers fast access by index, but slower insertions/removals in the middle.
+
+LinkedList – Maintains insertion order. Uses a doubly linked list, making it efficient for adding/removing elements at the beginning, middle, or end, but slower for random access compared to ArrayList.
+
+✅ Set Implementations
+HashSet – Does not maintain order, does not allow duplicates, and offers fast access due to hashing.
+
+LinkedHashSet – Maintains insertion order, does not allow duplicates, and is slightly slower than HashSet due to the overhead of maintaining order.
+
+✅ Map Implementations
+HashMap – Stores key-value pairs with no guaranteed order. Offers fast access via hashing.
+
+LinkedHashMap – Stores key-value pairs and preserves insertion order. Slightly slower than HashMap due to order tracking.
+===================================================================================================================================================
+
+HASHING
+
+
+Hashing is the process of converting a key into a hash code using a hash function. This hash code is then used to determine where the corresponding value should be stored or retrieved in a data structure like a HashMap or HashSet
+
+Every time you want to retrieve a value from a HashMap, the key you provide is hashed again using the same hash function. This freshly computed hash code is then used to locate the bucket (or memory slot) where the value is stored.
+
+Why ArrayList Is Different
+It’s backed by a resizable array, which means:
+
+Fast access by index (O(1)).
+
+But slower insertions/removals in the middle (O(n)), because elements have to shift.
+
+====================================================================================================================================================
+HOW A CLASS AND MEMORY IS STORED 
+
+
+public class Customer {
+    static String bankName = "ICICI"; // Static variable → Method Area
+    String name;                      // Instance variable → Heap
+
+    public Customer(String name) {
+        this.name = name;            // Constructor logic → Stack + Heap
+    }
+
+    public void greet() {
+        System.out.println("Hello, " + name); // Method call → Stack
+    }
+
+    public static void showBank() {
+        System.out.println("Bank: " + bankName); // Static method → Method Area
+    }
+}
+
+
+Step 1: Class Loading
+java
+Customer.showBank();
+JVM loads Customer.class into the Method Area.
+
+bankName and showBank() are stored here.
+
+No object is created yet — just the blueprint.
+
+📦 Memory Used:
+
+Method Area → Customer class metadata + static method + static variable
+
+🧱 Step 2: Object Creation
+java
+Customer c1 = new Customer("Pavitha");
+new Customer("Pavitha") creates an object in the Heap.
+
+name = "Pavitha" is stored inside that object.
+
+c1 is a reference variable, stored in the Stack (inside main() method frame).
+
+📦 Memory Used:
+
+Heap → Object with field name = "Pavitha"
+
+Stack → Reference c1 pointing to the Heap object
+
+🧱 Step 3: Method Invocation
+java
+c1.greet();
+JVM pushes a new Stack frame for greet() method.
+
+Inside that frame, it accesses name from the Heap via c1.
+
+📦 Memory Used:
+
+Stack → Frame for greet() method
+
+Heap → Still holds the object
+
+Method Area → Already loaded
+
+🧹 Step 4: Cleanup (Garbage Collection)
+java
+c1 = null; // Reference removed
+Now, no variable points to the object in the Heap.
+
+JVM marks it as eligible for garbage collection.
+
+At some point, the Garbage Collector will reclaim that memory.
+
+📦 Memory Freed:
+
+Heap → Object is removed
+
+Stack → Frame for main() eventually ends
+
+Method Area → Class remains loaded until JVM shuts down
+
+
+
+
+
+
+==============================================================================================================
+The reference type (Animal) decides what methods are visible at compile time.
+
+The object type (Dog) decides which method is executed at runtime — only for overridden methods.

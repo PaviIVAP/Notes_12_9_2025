@@ -1,0 +1,856 @@
+Docker commands
+
+🐳 Image Commands
+Command	Description
+docker build -t <name>:<tag> .	Build image from Dockerfile
+docker images	List all local images
+docker rmi <image-id/name>	Remove image
+docker history <image>	Show image layer history
+docker tag <image> <repo:tag>	Tag image for pushing
+docker pull <image>	Download image from Docker Hub
+docker push <repo:tag>	Upload image to Docker Hub
+
+📦 Container Commands
+Command	Description
+docker run <image>	Run a container
+docker run -d <image>	Run in background (detached)
+docker run -it <image> bash	Run interactively with terminal
+docker start <container-id>	Start a stopped container
+docker stop <container-id>	Stop a running container
+docker restart <container-id>	Restart a container
+docker rm <container-id>	Remove a container
+docker exec -it <container> bash	Execute command inside running container
+docker logs <container-id>	Show container logs
+docker cp <container>:/path ./host	Copy files from container to host
+
+📋 Information & Inspection
+Command	Description
+docker ps	List running containers
+docker ps -a	List all containers
+docker inspect <image/container>	Detailed JSON info
+docker stats	Real-time resource usage of containers
+docker top <container-id>	Show running processes in container
+
+🌐 Networking & Ports
+Command	Description
+docker network ls	List Docker networks
+docker network inspect <network>	Details about a network
+docker run -p 8080:80 <image>	Map host port 8080 to container port 80
+docker network create <network-name>	Create custom network
+docker network connect <network> <container>	Attach container to a network
+
+💾 Volumes (Data Persistence)
+Command	Description
+docker volume ls	List volumes
+docker volume create <volume-name>	Create a volume
+docker run -v <volume>:/path <image>	Mount volume into container
+docker volume inspect <volume-name>	Inspect volume details
+docker volume rm <volume-name>	Remove volume
+
+🧼 Cleanup & System Prune
+Command	Description
+docker system prune	Remove all unused containers, images, etc.
+docker image prune	Remove dangling (unused) images
+docker container prune	Remove stopped containers
+docker volume prune	Remove unused volumes
+----------------------------------------------
+
+✅ Summary of Docker Network Types
+-----------------------------------------------
+Network Type	Explanation
+-----------------------------------------------------------------
+bridge (default)
+=================	
+✅ Default network for containers on a single host.
+✅ Gives separate internal IPs to each container.
+✅ Containers can talk to each other via their IP (or name if in a custom bridge).
+❗ Needs port mapping (-p) to access from outside.
+
+custom bridge
+=============
+	✅ Like default bridge, but gives more control:
+- You can name the network
+- DNS-based discovery (use container names to talk)
+- Better isolation for multi-container apps on one host
+
+none	
+==================
+❌ The container has no network at all.
+🔒 Used for security, manual networking, or debugging.
+host	✅ The container shares the host's network stack.
+✅ No isolation; no port mapping needed.
+❗ Can cause port conflicts. Only available natively on Linux.
+
+overlay	
+============================
+🌐 Used for multi-host networking.
+✅ Containers on different Docker hosts can talk like they’re on the same LAN.
+🔒 Often used with Docker Swarm.
+
+macvlan
+=========================
+	🖧 Gives containers a real IP on the LAN, like a VM.
+✅ The container acts like a separate machine on the network.
+✅ Used when containers need to be treated like regular hosts by other devices on the network.
+
+🔍 Example Use Cases:
+-----------------------------
+bridge – Simple apps running on one host
+
+custom bridge – Multi-container apps (like backend + database)
+
+host – High-performance use or direct access to host network
+
+overlay – Distributed systems / Docker Swarm clusters
+
+macvlan – IoT setups, containers that need to be visible on LAN
+
+none – Debugging, special network setups
+
+----------------------------------------------------------------------------------------
+
+
+volumes:
+so you create a volume mydata outside the container
+inside /data in the container it will be mounted so everything saved created gets stored  in /data but points to the mydata outside where the saved are beings redirected
+
+
+You create a volume called mydata → this lives outside the container, managed by Docker.
+
+When you run a container with -v mydata:/data, you're saying:
+
+“Hey Docker, please mount the mydata volume inside the container at the path /data.”
+
+So when your container reads or writes files in /data, it’s actually reading or writing into the mydata volume.
+
+This means:
+
+The data is not lost even if the container is deleted.
+
+You can re-use the volume in another container and get the same data.
+
+
+-----------------------------------------------------------------------------------------------------
+docker push
+
+When you want to push this image to Docker Hub, you need to tag it with your Docker Hub username and repository name so Docker knows where to push it.
+
+Create an account on Docker Hub.
+
+Log in to Docker Hub from your local machine using:
+docker login
+You’ll enter your Docker Hub username and password.
+
+Tag your local image with your Docker Hub repository name:
+docker tag <local-image-name>:<tag> <dockerhub-username>/<repository-name>:<tag>
+Example:
+docker tag myapp:latest johnsmith/myapp:latest
+
+Push the image to Docker Hub:
+docker push <dockerhub-username>/<repository-name>:<tag>
+Example:
+docker push johnsmith/myapp:latest
+
+Now your image is available on Docker Hub and others can pull it using:
+docker pull johnsmith/myapp:latest
+
+why?
+Docker Hub images are organized under usernames and repositories, like:
+
+<dockerhub-username>/<repository-name>:<tag>
+
+
+
+
+
+------------------------------------------------------------------------------
+
+
+
+
+
+
+1. Dockerfile Deep Dive
+Difference between CMD vs ENTRYPOINT
+
+Multi-stage builds
+
+Caching & layers
+
+Best practices in Dockerfile
+
+📦 2. Volumes & Persistent Storage
+Bind mounts vs named volumes
+
+Use-cases for each
+
+Volume-related commands
+
+🌐 3. Docker Networks
+Bridge, Host, and None networks
+
+Creating custom networks
+
+Linking containers for communication
+
+🤝 4. Docker Compose (Multi-container setup)
+docker-compose.yml structure
+
+Example with frontend + backend + database
+
+depends_on, build, volumes, networks
+
+🔐 5. Secrets & Environment Variables
+Handling credentials securely
+
+.env files with Compose
+
+Docker secrets (Swarm)
+
+🔁 6. Restart Policies
+--restart always, on-failure, etc.
+
+Ensuring services recover from failure
+
+🧪 7. Debugging Docker Containers
+docker logs
+
+docker exec -it
+
+Shell into containers
+
+Healthchecks
+
+⚙️ 8. Docker in CI/CD
+Integrating Docker with Jenkins pipelines
+
+Building Docker images in Jenkins
+
+Pushing to Docker Hub or private registry
+
+Deploying with Docker Compose via Jenkins
+
+
+
+--------------------------------------------
+1
+Each command in a Dockerfile (RUN, COPY, ADD, etc.) creates a new image layer. More layers increase image size and complexity, slowing down builds and deployments.
+You can minimize layers by:
+
+Combining commands using &&:
+
+dockerfile
+
+RUN apt-get update && apt-get install -y curl git
+
+2
+
+Docker builds images as a stack of layers. Each layer is cached and reused if nothing changed in that step.
+
+Example:
+
+COPY requirements.txt .  
+RUN pip install -r requirements.txt  
+If requirements.txt hasn't changed, Docker skips re-running the pip install step, speeding up the build.
+
+So:
+
+Layers help caching
+
+Earlier unchanged layers = faster rebuilds
+
+Changing a file invalidates cache from that step onward
+
+
+3
+in a bind mount, the code stays on the host — and Docker simply links (mounts) that directory into the container
+ Named Volumes ----Stored in Docker’s storage directory (/var/lib/docker/volumes)
+
+
+docker volume create myvol	Create volume
+docker volume ls	        List all volumes
+docker volume inspect myvol	See details (mount path, usage)
+docker volume rm myvol	        Delete specific volume
+docker volume prune	        Remove all unused volumes
+docker container prune          This will remove only containers that are in the exited/stopped state.
+
+syntax:
+docker run -v /home/user/myapp:/app python:3.9-slim bash
+
+
+
+named volume-----------------
+docker volume create mydata
+docker run -v mydata:/app/data myimage
+
+
+Bind mount------------------------
+docker run -v /host/path:/container/path myimage
+
+anaonymous
+No volume name was given.
+
+Docker will auto-generate one (like b8b2a7ff9e8f...).
+
+Data goes to a temporary location managed by Docker.
+
+When you remove the container it will be removed too ----the defalt assigned by the docker
+
+
+PRUNE Command	What It Does
+docker volume prune	Deletes all unused volumes
+docker container prune	Deletes all stopped containers
+docker image prune	Deletes dangling images (untagged or unused layers)
+docker network prune	Deletes all unused networks
+docker system prune	🧨 Deletes everything unused: containers, volumes, networks, and images (be cautious!)
+
+
+
+
+
+Aspect	          Docker Containers	                                          Virtual Machines (VMs)
+===========================================================================================================================================
+Isolation Level	  Shares the host OS kernel. Lightweight.	                  Each VM runs a full OS with its own kernel. Heavyweight.
+Performance	  Fast startup, low resource usage. Ideal for microservices.	  Slower startup due to full OS boot. Higher resource usage.
+Portability	  Portable across any platform with Docker installed.	          Less portable, more tightly coupled to hypervisor/platform.
+Storage (Volumes) Volumes managed by Docker (named/bind). Easy to backup/share.	  Storage is tied to disk images (e.g., VHD). More complex.
+Use Cases	  Best for CI/CD, microservices, dev/test environments.	          Best when full OS isolation is needed (e.g., legacy apps).
+
+
+
+
+
+
+Docker Networks
+
+1 Bridge Network (Default)
+Creates a private network inside Docker.
+
+Containers can talk to each other using container names.
+
+Good for most apps running on a single host.
+
+✅ Example: docker run --network bridge myapp
+
+2. Host Network
+The container shares the host’s network.
+
+No network isolation.
+
+Fast, but less secure.
+✅ Use when you need raw speed or full access to host ports.
+
+🚫 3. None Network
+Container has no network access at all.
+
+Completely isolated.
+
+✅ Use for debugging or when network access is not needed.
+
+🧱 4. Custom Bridge Network
+Created by you.
+
+Lets containers talk to each other by name (not IP).
+
+Recommended over default bridge.
+
+✅ Create it:
+docker network create mynetwork
+
+docker network ls            # List networks
+docker network inspect NAME  # See details
+docker network rm NAME  
+
+--------------------------------------------------------
+version: '3.8'
+
+services:
+  frontend:
+    build: ./frontend
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+    networks:
+      - mynetwork
+
+  backend:
+    build: ./backend
+    ports:
+      - "5000:5000"
+    depends_on:
+      - db
+    environment:
+      - DB_HOST=db
+      - DB_USER=root
+      - DB_PASSWORD=root
+    networks:
+      - mynetwork
+
+  db:
+    image: mysql:8.0
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_DATABASE=myapp
+    volumes:
+      - dbdata:/var/lib/mysql
+    networks:
+      - mynetwork
+
+volumes:
+  dbdata:
+
+networks:
+  mynetwork:
+
+
+
+Concept	                                 Description
+------------------------------------------------------------------------------------------------------------------------------
+build	                                 Builds the Docker image using the Dockerfile in the specified directory
+image	                                 Pulls from Docker Hub if build not used
+depends_on	                         Defines startup order (not readiness)
+environment	                         Sets environment variables inside the container
+ports	                                 Maps container port to host (e.g. 3000:3000)
+volumes	                                 Persists data (e.g., MySQL storage)
+networks	                         Allows inter-container communication using names like db, backend
+
+
+
+ Dockerfile is for building(like a blueprint), docker-compose is for managing everything together: build + run + connect.
+
+
+---------------------------------------------------------------------------------------------------------------------------------
+
+Docker swarm:
+Docker Swarm is used to run containers on multiple machines, automatically manage them, and make sure your app never goes down.
+Docker Swarm is powerful it orchestrates containers across nodes
+
+  🐳 Docker Swarm
+--------------------------------------------
+|             |               |             |
+Node 1     Node 2        Node 3       <- all part of the Swarm
+
+Node 1: my-app
+Node 2: my-app
+Node 3: my-app
+
+
+Node 1: frontend
+Node 2: backend
+Node 3: database
+
+
+Without Swarm	                              With Swarm
+---------------------------------------------------------------------------------------------------------	
+One container on one computer	              Many containers on many computers
+Manual restart	                              Auto-restart if failure
+No load balancing	                      Built-in load balancing
+No scaling	                              Easily scale up/down
+
+
+
+----------------------------------------------------------------------------------------------------------
+
+Docker Secrets:
+
+In Docker Swarm, a secret is a secure, encrypted file-like object used to store sensitive data like:
+
+passwords
+
+API tokens
+
+SSH keys
+
+TLS certificates
+
+Secrets only work in Docker Swarm, not in regular docker run or standalone Compose (unless using Swarm mode).
+
+They're not environment variables. They're files.
+
+we cannot directly access secrets 
+
+❓	🔍 Behavior
+------------------------------------------------------------------------------------------------------------------------------------------------
+Can you open a secret on the host?	❌ No. It's encrypted in Swarm's internal store. Not even root can casually access it from disk.
+Can a container read it?	         ✅ Yes, but only if it's a Swarm service that has been explicitly granted access.
+How does a container access it?  	As a read-only file inside the container at /run/secrets/<secret-name>
+Can it be accessed via docker exec?	✅ Only inside the container that received the secret.
+
+e.g
+
+echo "my-password" | docker secret create db_password -
+
+services:
+  myapp:
+    image: myapp:latest
+    secrets:
+      - db_password
+
+secrets:
+  db_password:
+    external: true
+
+Inside the running container, you’ll see:
+cat /run/secrets/db_password
+# Output: my-password
+
+
+But this file:
+
+is not writable
+
+is not visible to other containers
+
+is not exposed in docker inspect or logs
+
+and is automatically removed when the container stops
+
+
+
+Secrets are not passed as env vars (which could be logged or seen via ps)
+
+They are not saved in images or volumes
+
+They don’t leak into build stages
+
+
+it only works inside swarm cause only swarms security is suitable for secrets
+Swarm’s internal Raft store for securely storing the secrets
+
+Swarm managers to distribute secrets only to services that need them
+
+Secure communication between nodes to transmit secrets safely
+
+➡️ Standalone Docker lacks these security primitives, so secrets can’t be securely handled in the same way.
+
+
+secrest are stored in container's:
+
+run/secrets/db_password
+
+
+secrets are encrypted, stored securely on Docker Swarm manager nodes, and only accessible as read-only files inside the container.
+
+They improve security by minimizing the risk of accidental leaks and keeping sensitive information away from logs or unauthorized users.
+
+
+
+so main thing:
+=====================================
+
+docker scerets are created in docker swarm mode
+once created it is managed by swarm manager
+then in the compose.yml when we assign the secrets in the secrets sectionthen only it is auctomativally get placed in run/secrets/password path in that serive meaning that docker , if another service also wants to use that then there also we need to define it 
+
+Docker secrets are created using docker secret create
+
+They're stored in Docker Swarm (not in any container or image)
+
+Only services that declare the secret can access them
+
+Secrets are mounted inside the container at /run/secrets/<secret_name>
+
+Docker secrets rely on Swarm’s built-in key management, access control, and encrypted data exchange between nodes. These features are not available in regular (standalone) Docker containers, which is why secrets only work in Swarm.
+
+
+
+
+
+If you want Docker Compose to create the secret from a file:
+
+if secret already exists
+secrets:
+  db_password:
+    external: true
+
+secrets:
+  db_password:
+    file: ./db_password.txt
+
+In this case:
+
+Compose will create the secret on deploy (only in Swarm mode).
+
+You don’t need to run docker secret create manually.
+--------------------------------------------------------------------------------------------------
+HOW TO READ THE SECRETS DATA:
+
+ While the container is running:
+The secret is available inside the container at /run/secrets/<secret_name>.
+
+You can view it using:
+
+docker exec -it <container_id> cat /run/secrets/db_password
+🔍 This is useful for debugging or verifying if the secret was mounted correctly.
+
+🔒 Important Notes:
+You cannot view secrets from the host filesystem directly (they are encrypted and managed by Docker).
+
+The secret only exists inside the container and is read-only, temporary, and only during runtime.
+
+After the container stops, the secret is gone from that container.
+
+So how do secrets work during runtime?-----------------------------------------
+When a container is using a secret, here’s what happens:
+
+Docker mounts the secret file into the container at /run/secrets/<secret_name>.
+
+Inside your containerized application (for example, a Node.js or Python app), your code reads the secret from this path.
+
+Unless your code explicitly prints the secret (e.g., console.log(secret) or print(secret)), it won’t be visible in logs or terminal output.
+======================================================================================================================================================
+While the container is running, and the secret has been assigned to it via Docker Swarm or Compose,
+you can run:
+
+docker exec -it <container_name> cat /run/secrets/<secret_name>
+➡️ This will display the contents of the secret (e.g., your password, token, etc.).
+
+
+
+IMPORTANT:
+Instruction	                    When it Executes
+FROM, COPY, RUN, WORKDIR	    ✅ During docker build — this is when your image is created
+CMD, ENTRYPOINT	                    ✅ During docker run — this is when a container starts from your image
+==================+
+Difference btw entrypoint and cmd
+
+ENTRYPOINT ["ping"]
+CMD ["google.com"]
+
+When the container runs without any arguments:
+
+
+docker run myimage
+
+🔧 It becomes:
+
+ping google.com
+
+
+ ENTRYPOINT is more “forceful” and ensures a fixed behavior, so it’s used when you want your container to always run a specific application.
+
+✅ CMD is flexible and optional, used for defaults that can be easily overridden.
+
+
+============================+
+
+A Docker volume is a persistent storage mechanism used by containers to store data outside of the container's filesystem. It allows data to persist even when the container is stopped, removed, or recreated.
+
+==========================+
+
+Multi-stage builds allow you to use multiple FROM statements in a single Dockerfile, where each stage can have its own base image. This is mainly used to separate the build environment from the final production image.
+
+What Multi-Stage Build Does:
+It's like breaking the app creation into parts:
+
+Build tools → e.g., Node, Maven, Gradle (used only for compiling).
+
+Config or temp files → used only during build.
+
+Source code → that you write and edit.
+
+And then:
+➡️ Only the final built application (e.g., compiled code or ready-to-run app) is taken into the final Docker image.
+
+
+================================================================
+Dockerfile	                       Docker Compose
+-----------------------------------------------------------------------------------------------------------------------
+Defines how to build an image	       Defines how to run multiple containers together
+Single container focus	               Multi-container orchestration
+Uses docker build to build images      Uses docker-compose up to build and run
+Written in Dockerfile syntax	       Written in YAML syntax
+No orchestration capability	       Provides networking, volumes, environment configs for multiple services
+
+
+
+
+
+
+
+
+
+
+PRACTICAL:
+
+to install docker first run this below to add docker repo to yum repo 
+
+1s command:
+--------------------
+yum-config-manager is a utility that manages repository configurations.
+
+It requires an action flag like:
+
+--add-repo: add a new repo
+
+--enable: enable an existing repo
+
+--disable: disable an existing repo
+
+etc.
+
+sudo yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
+✔️ The --add-repo argument is required to add the Docker repository.
+Always include --add-repo <URL> when adding a new repository with yum-config-manager.
+
+
+2nd command:
+------------------------------
+
+sudo yum install docker-ce docker-ce-cli containerd.io
+✔️ What are these?
+
+docker-ce: Docker Community Edition engine
+
+docker-ce-cli: Docker command-line tool
+
+containerd.io: container runtime used by Docker
+
+DAEMON:
+
+A daemon (pronounced dee-muhn) is a background process that runs continuously on a computer to handle system or service requests.
+
+1.Runs in the background: Not directly controlled by a user after starting.
+
+2.No user interface: Works silently without needing user interaction.
+
+3.Starts at boot time: Often starts automatically when the system boots (e.g., networking services, database services).
+
+4.It listens for Docker API requests, manages images, containers, networks, and volumes.
+
+----------------------------------------------------------
+When you run:
+
+-->docker run hello-world
+
+The Docker CLI (client) sends this command to the Docker daemon, which actually does the work of pulling the image and running the container.
+
+
+ A daemon is a background service process[dockerd]
+✅ Docker Daemon manages everything about containers and images
+✅ Without dockerd running, Docker commands won’t work
+
+there are other daemons too 
+
+----------------------------------------------------------------------------------------
+HOW TO ADD YOUR USER TO DOCKER GROP SO THAT IT WONT ASK OR NO NEED TO GIVE SUDO EVERYTIME
+
+🔧 Solution 2: Run Docker as a non-root user (permanent fix)
+If you don’t want to type sudo every time:
+
+Create docker group (if not exists):
+
+sudo groupadd docker
+
+-----------------------------------------
+Add your user to docker group:
+
+sudo usermod -aG docker $USER
+
+-----------------------------------------------
+Activate group membership:
+
+Log out and log back in, or run:
+
+newgrp docker
+-------------------------------------------------
+Test without sudo:
+
+docker run hello-world
+docker run -it ubuntu bash
+✔️ Should now work without sudo.
+
+
+============================================================================================================================================
+HOW TO EXECUTE A COMMAND IN ALREADY RUNNING CONTAINER:
+
+
+ What is docker exec?
+✅ docker exec allows you to run a command inside a running container.
+
+🔎 Why do we need it?
+When you run a container in detached mode or with a specific command, you might want to:
+
+Inspect what’s happening inside.
+
+Run additional commands (e.g. check logs, install packages).
+
+Debug the running container.
+
+💡 How does it work?
+✅ Syntax:
+
+
+docker exec [options] <container_id or name> <command>
+
+
+🔧 Most common usage:
+
+docker exec -it <container_id> bash
+✔️ This:
+
+-i : Interactive.
+
+-t : Allocates a pseudo-TTY (terminal).
+
+<container_id> : Target running container.
+
+bash : Opens bash shell in that container.
+
+
+
+docker run -d ubuntu sleep 1000
+docker exec -it <container_id> bash
+
+
+a5141605043f
+
+
+====================================================================================
+When you build a Docker image using a Dockerfile, Docker:
+
+Creates a temporary container layer for each instruction (RUN, COPY, etc.).
+
+Executes the command inside that layer.
+
+Commits the result as a new image layer.
+
+Discards the temporary container after each step.
+
+So yes — Docker internally spins up ephemeral containe
+
+eg
+Start from the ubuntu:22.04 base image.
+
+Create a temporary container → run apt-get update → commit the result.
+
+Create another container from that layer → run apt-get install curl → commit again.
+
+Final image includes both layers.
+
+
+
+
+why?
+
+Each layer is built on top of the previous one, but they’re independent in terms of caching and effect:
+
+Layer 1: apt-get update → updates package lists.
+
+Layer 2: apt-get install curl → installs curl.
+
+If you change Layer 2, Layer 1 is still reused.
+
+This modularity is what makes Docker builds efficient and predictable.
+
+
+
+eg
+
+RUN apt-get update
+RUN apt-get install -y curl
+If apt-get update hasn’t changed, Docker skips it and reuses the cached layer.
+
+Only new or changed instructions are re-executed.
+
