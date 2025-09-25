@@ -1,5 +1,0 @@
-The mainframe server is the real backend system — it’s the actual big computer running the applications and data.
-
-The IBM terminal (physical or emulator) connects to the mainframe server.
-
-The emulator (using TNEmulator class) imitates the IBM terminal, not the mainframe server.
